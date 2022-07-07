@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<sr:Response xmlns:sr="http://www.dccinterface.co.uk/ServiceUserGateway" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" xmlns:ra="http://www.dccinterface.co.uk/ResponseAndAlert" schemaVersion="5.1">
+  <sr:Header>
+    <sr:RequestID>90-B3-D5-1F-30-01-00-00:88-73-84-57-00-2F-96-6C:1655991767747</sr:RequestID>
+    <sr:ResponseID>88-73-84-57-00-2F-96-6C:90-B3-D5-1F-30-01-00-00:1655991767747</sr:ResponseID>
+    <sr:ResponseCode>I0</sr:ResponseCode>
+    <sr:ResponseDateTime>2022-06-23T13:42:52.264Z</sr:ResponseDateTime>
+  </sr:Header>
+  <sr:Body>
+    <sr:ResponseMessage>
+      <sr:ServiceReference>11.2</sr:ServiceReference>
+      <sr:ServiceReferenceVariant>11.2</sr:ServiceReferenceVariant>
+      <sr:GBCSPayload>3QAAAAAAAFURAAAAAN8JAgAAAYGQzRSDCIhzhFcAL5ZsCJCz1R8wAAACABIAWZCz1R8wAQAAAAABgZDNEsMR2iDNFIMAAAEJBAwVAAABAQAAsmMe6aqF4htmxPZp</sr:GBCSPayload>
+    </sr:ResponseMessage>
+  </sr:Body>
+  <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    <ds:SignedInfo>
+      <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
+      <ds:Reference URI="">
+        <ds:Transforms>
+          <ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </ds:Transforms>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+        <ds:DigestValue>fwOFNlI6c8A3CwIetb+MbR2zaOEE1UkYMw70m9qprBU=</ds:DigestValue>
+      </ds:Reference>
+    </ds:SignedInfo>
+    <ds:SignatureValue>Ppgi1Wn2tBDe1K8qaRgoRFhzMOrQdMn3nMn9bJ90xBD3jmfxQCKLVWr9immyE3FsY2nL80lZN8Vh&#13; JTqouTI1CQ==</ds:SignatureValue>
+  </ds:Signature>
+</sr:Response>

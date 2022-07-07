@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sr:Request xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:sr="http://www.dccinterface.co.uk/ServiceUserGateway" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="5.0">
+  <sr:Header>
+    <sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000</sr:RequestID>
+    <sr:CommandVariant>1</sr:CommandVariant>
+    <sr:ServiceReference>4.1</sr:ServiceReference>
+    <sr:ServiceReferenceVariant>4.1.1</sr:ServiceReferenceVariant>
+  </sr:Header>
+  <sr:Body>
+    <sr:ReadInstantaneousImportRegisters/>
+  </sr:Body>
+</sr:Request>

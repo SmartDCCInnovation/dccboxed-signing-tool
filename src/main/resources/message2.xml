@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<sr:Response xmlns:sr="http://www.dccinterface.co.uk/ServiceUserGateway" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" xmlns:ra="http://www.dccinterface.co.uk/ResponseAndAlert" schemaVersion="5.1">
+  <sr:Header>
+    <sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1655397248260</sr:RequestID>
+    <sr:ResponseID>00-07-81-D7-00-00-36-CE:90-B3-D5-1F-30-01-00-00:1655397248260</sr:ResponseID>
+    <sr:ResponseCode>I0</sr:ResponseCode>
+    <sr:ResponseDateTime>2022-06-16T16:34:15.844Z</sr:ResponseDateTime>
+  </sr:Header>
+  <sr:Body>
+    <sr:ResponseMessage>
+      <sr:ServiceReference>11.2</sr:ServiceReference>
+      <sr:ServiceReferenceVariant>11.2</sr:ServiceReferenceVariant>
+      <sr:GBCSPayload>3QAAAAAAAEURAAAAAN8JAgAAAYFtXW0ECAAHgdcAADbOCJCz1R8wAQAAAAIAWRHaIF1tBAAAAQkEBRUFCQEBAAAEjkwmYsu0A2NOP4E=</sr:GBCSPayload>
+    </sr:ResponseMessage>
+  </sr:Body>
+</sr:Response>
