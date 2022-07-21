@@ -65,9 +65,13 @@ command to a DCC Boxed instance:
 java -cp xmldsig-1.0-SNAPSHOT.jar uk.co.smartdcc.boxed.xmldsig.Sign CS08_11.2_SUCCESS_REQUEST_DUIS.XML | curl http://dccboxed-server:8079/api/v1/serviceS -H 'Content-Type: application/xml' --data-binary -
 ```
 
-In the case that signing is successful, the posix return code will be set to
-0. In the case that the XSD validation failed the posix return code will be 1.
-In other cases where an error has occurred the posix return code will be 2.
+#### Posix Return Codes
+
+* **0**: Successful.
+* **1** Generic `java` or OS error.
+* **2** An exception raised in the app.
+* **3** Missing public or private key material.
+* **10** XSD validation failed. 
 
 #### Advanced Signing
 
@@ -101,10 +105,13 @@ Or to read the DUIS message from `stdin`
 java -cp ./target/xmldsig-1.0-SNAPSHOT.jar uk.co.smartdcc.boxed.xmldsig.Validate -
 ```
 
-In the case that validation is successful, the posix return code will be set to
-0. In the case that the XSD validation failed or signature validation failed the
-posix return code will be 1. In other cases where an error has occurred the
-posix return code will be 2.
+#### Posix Return Codes
+
+* **0**: Successful.
+* **1** Generic `java` or OS error.
+* **2** An exception raised in the app.
+* **3** Missing public or private key material.
+* **10** XSD validation or signature check failed. 
 
 #### Advanced Validation
 

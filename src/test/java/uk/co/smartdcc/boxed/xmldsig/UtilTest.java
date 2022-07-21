@@ -193,7 +193,7 @@ public class UtilTest {
                 int statusCode = SystemLambda.catchSystemExit(() -> {
                         Util.load_certificate_checked(f, file_name);
                 });
-                Assertions.assertEquals(2, statusCode);
+                Assertions.assertEquals(3, statusCode);
         }
 
         @Test
@@ -206,7 +206,7 @@ public class UtilTest {
                 int statusCode = SystemLambda.catchSystemExit(() -> {
                         Util.load_certificate_checked(f, file_name);
                 });
-                Assertions.assertEquals(2, statusCode);
+                Assertions.assertEquals(3, statusCode);
         }
 
         @Test
@@ -226,7 +226,7 @@ public class UtilTest {
                 int statusCode = SystemLambda.catchSystemExit(() -> {
                         Util.load_key_checked(f, file_name);
                 });
-                Assertions.assertEquals(2, statusCode);
+                Assertions.assertEquals(3, statusCode);
         }
 
         @Test
@@ -239,7 +239,7 @@ public class UtilTest {
                 int statusCode = SystemLambda.catchSystemExit(() -> {
                         Util.load_key_checked(f, file_name);
                 });
-                Assertions.assertEquals(2, statusCode);
+                Assertions.assertEquals(3, statusCode);
         }
 
         @Test

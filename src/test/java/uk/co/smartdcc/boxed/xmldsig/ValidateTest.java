@@ -38,7 +38,7 @@ public class ValidateTest {
     int statusCode = SystemLambda.catchSystemExit(() -> {
       Validate.main(new String[] { file_name });
     });
-    Assertions.assertEquals(1, statusCode);
+    Assertions.assertEquals(10, statusCode);
   }
 
   @Test
@@ -110,7 +110,7 @@ public class ValidateTest {
     int statusCode = SystemLambda.catchSystemExit(() -> {
       Validate.main(new String[] { file_name, cert });
     });
-    Assertions.assertEquals(1, statusCode);
+    Assertions.assertEquals(10, statusCode);
   }
 
   @Test

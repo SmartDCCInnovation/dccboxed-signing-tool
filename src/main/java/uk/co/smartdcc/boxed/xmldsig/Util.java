@@ -159,7 +159,7 @@ public final class Util {
     } catch (CertificateException e) {
       System.err.println("[E] cert file could not be loaded");
     }
-    System.exit(2);
+    System.exit(3);
     return null;
   }
 
@@ -191,7 +191,7 @@ public final class Util {
     } catch (InvalidKeySpecException e) {
       System.err.println("[E] privkey could not be parsed");
     }
-    System.exit(2);
+    System.exit(3);
     return null;
   }
 

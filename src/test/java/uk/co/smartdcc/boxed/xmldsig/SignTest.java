@@ -40,7 +40,7 @@ public class SignTest {
     int statusCode = SystemLambda.catchSystemExit(() -> {
       Sign.main(new String[] { file_name });
     });
-    Assertions.assertEquals(1, statusCode);
+    Assertions.assertEquals(10, statusCode);
   }
 
   @Test

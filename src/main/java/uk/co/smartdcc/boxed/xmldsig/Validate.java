@@ -45,7 +45,7 @@ public class Validate {
     Document doc = Util.load_duis_file_checked(args[0]);
     if (doc == null) {
       System.err.println("[I] failed xsd validation");
-      return 1;
+      return 10;
     }
     System.err.println("[I] passed xsd validation");
 
@@ -98,7 +98,7 @@ public class Validate {
     }
 
     System.err.println("[I] " + (coreValidity ? "passed" : "failed") + " signature check");
-    return coreValidity ? 0 : 1;
+    return coreValidity ? 0 : 10;
   }
 
   public static void main(String[] args) {
