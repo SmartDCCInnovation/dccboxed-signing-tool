@@ -88,7 +88,7 @@ public class Sign {
       cer = CertificateLibrary.getInstance().lookup(businessOriginatorId);
       if (cer == null) {
         System.err.println("[E] could not locate certificate for: " + businessOriginatorId);
-        return 2;
+        return 3;
       }
     }
     System.err.println("[I] certificate serial number: " + cer.getSerialNumber());
@@ -102,7 +102,7 @@ public class Sign {
       pkey = CertificateLibrary.getInstance().lookup_key(businessOriginatorId);
       if (pkey == null) {
         System.err.println("[E] could not locate private key for: " + businessOriginatorId);
-        return 2;
+        return 3;
       }
     }
 

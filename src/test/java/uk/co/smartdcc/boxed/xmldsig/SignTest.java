@@ -50,7 +50,7 @@ public class SignTest {
     int statusCode = SystemLambda.catchSystemExit(() -> {
       Sign.main(new String[] { file_name });
     });
-    Assertions.assertEquals(2, statusCode);
+    Assertions.assertEquals(3, statusCode);
   }
 
   @Test
@@ -62,7 +62,7 @@ public class SignTest {
     int statusCode = SystemLambda.catchSystemExit(() -> {
       Sign.main(new String[] { file_name, cert });
     });
-    Assertions.assertEquals(2, statusCode);
+    Assertions.assertEquals(3, statusCode);
   }
 
   @Test

@@ -68,7 +68,7 @@ public class Validate {
       if (cer == null) {
         System.err.println(
             "[E] could not locate certificate for: " + (nl.getLength() >= 1 ? nl.item(0).getTextContent() : "unknown"));
-        return 2;
+        return 3;
       }
     }
     PublicKey key = cer.getPublicKey();
