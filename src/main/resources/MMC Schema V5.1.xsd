@@ -4,11 +4,11 @@
     targetNamespace="http://www.dccinterface.co.uk/ResponseAndAlert" elementFormDefault="qualified">
 
     <!--
-    XML Filename                                 - MMC Schema V5.0a
-    MMC XML Schema Version - GBCSResponse        - 5.0
+    XML Filename                                 - MMC Schema V5.1
+    MMC XML Schema Version - GBCSResponse        - 5.1
     Aligned with GBCS version                    - 4.1
-    Date                                         - January 2021
-    Minor revision of this XML schema            - Draft to align version number with DUIS 5.0
+    Date                                         - June 2022
+    Minor revision of this XML schema            - Includes changes for SEC Mod 15
     -->
 
     <!-- Types previously defined in DUIS  -->
@@ -3950,7 +3950,25 @@
                 type="ra:ServiceReference"/>
             <xs:element maxOccurs="1" minOccurs="0" name="ServiceReferenceVariant"
                 type="ra:ServiceReferenceVariant"/>
-            <xs:element maxOccurs="1" minOccurs="0" name="Timestamp" type="xs:dateTime"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="Timestamp">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:dateTime">
+                            <xs:attribute name="isFromGSME" type="xs:boolean" use="optional"/>
+                            <xs:attribute name="ClockStatus" use="optional">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:maxLength value="25"/>
+                                        <xs:enumeration value="reliable"/>
+                                        <xs:enumeration value="invalid"/>
+                                        <xs:enumeration value="unreliable"/>
+                                    </xs:restriction>
+                                </xs:simpleType>  
+                            </xs:attribute>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>            
         </xs:sequence>
     </xs:complexType>
 

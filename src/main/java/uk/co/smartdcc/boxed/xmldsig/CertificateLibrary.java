@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class CertificateLibrary {
-  private static String[] certificate_names = {
+  private static String[] certificate_names_original = {
       "Z1-accessControlBroker-ds",
       "Z1-networkOperator-ds",
       "Z1-recovery-ds",
@@ -37,6 +37,17 @@ public final class CertificateLibrary {
       "Z1-transitionalCoS-ds",
       "Z1-wanProvider-ds",
   };
+  private static String[] certificate_names_xmlSign = {
+      "Z1-accessControlBroker-ds",
+      "xml-sign-90B3D51F30020000-ds",
+      "Z1-recovery-ds",
+      "xml-sign-90B3D51F30010000-ds",
+      "Z1-supplier2-ds",
+      "Z1-transitionalCoS-ds",
+      "Z1-wanProvider-ds",
+  };
+  private static String[] certificate_names = certificate_names_xmlSign;
+
   private static CertificateLibrary INSTANCE;
 
   public static CertificateLibrary getInstance() {

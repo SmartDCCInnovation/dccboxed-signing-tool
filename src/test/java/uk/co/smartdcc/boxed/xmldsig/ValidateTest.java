@@ -44,11 +44,11 @@ public class ValidateTest {
   @Test
   void missingSignature() throws Exception {
     String file_name = ValidateTest.class.getClassLoader()
-        .getResource("readfw-response-no-signature.xml").getFile();
+        .getResource("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML").getFile();
     int statusCode = SystemLambda.catchSystemExit(() -> {
       Validate.main(new String[] { file_name });
     });
-    Assertions.assertEquals(1, statusCode);
+    Assertions.assertEquals(10, statusCode);
   }
 
   @Test
@@ -124,5 +124,18 @@ public class ValidateTest {
       Assertions.assertEquals(0, statusCode);
     });
     Assertions.assertFalse(out.contains("</ds:Signature>"));
+  }
+
+  @Test
+  void responseNoSignature() throws Exception {
+    String file_name = ValidateTest.class.getClassLoader()
+        .getResource("acknowledgement-error.xml").getFile();
+    String out = SystemLambda.tapSystemOut(() -> {
+      int statusCode = SystemLambda.catchSystemExit(() -> {
+        Validate.main(new String[] { file_name });
+      });
+      Assertions.assertEquals(0, statusCode);
+    });
+    Assertions.assertTrue(out.contains("<sr:ResponseCode>E65</sr:ResponseCode>"));
   }
 }

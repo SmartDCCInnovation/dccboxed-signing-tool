@@ -46,7 +46,7 @@ public final class Util {
   private Util() {
   }
 
-  private static String DUIS_FILE_NAME = "DUIS Schema V5.0.xsd";
+  private static String DUIS_FILE_NAME = "DUIS Schema V5.1.xsd";
   private static Schema schema = null;
 
   public static Schema load_schema() {

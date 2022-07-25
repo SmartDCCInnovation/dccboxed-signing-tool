@@ -28,6 +28,11 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -51,8 +56,24 @@ public class Validate {
 
     NodeList signatureList = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
     if (signatureList.getLength() != 1) {
+      NodeList root = doc.getChildNodes();
+      if (root.getLength() == 1 && root.item(0).getLocalName().equals("Response")) {
+        System.err.println("[I] response without signature, validation check skipped");
+
+        try {
+          TransformerFactory tf = TransformerFactory.newInstance();
+          Transformer trans = tf.newTransformer();
+          trans.setOutputProperty(OutputKeys.INDENT, "yes");
+          trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+          trans.transform(new DOMSource(doc), new StreamResult(System.out));
+        } catch (Exception e) {
+          System.err.println("[E] internal error");
+          return 2;
+        }
+        return 0;
+      }
       System.err.println("[W] signature missing, validation check skipped");
-      return 1;
+      return 10;
     }
 
     CertificateFactory fact = Util.create_certificate_factory();
