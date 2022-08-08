@@ -36,21 +36,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CertificateLibraryTest {
-        private List<Triplet<String, String, BigInteger>> testData_original = Arrays.asList(
-                        new Triplet<>("Z1-accessControlBroker-ds.pem", "90B3D51F30000002",
-                                        new BigInteger("587FE59553E2675B0C0E2A5C402A9F61", 16)),
-                        new Triplet<>("Z1-networkOperator-ds.pem", "90B3D51F30020000",
-                                        new BigInteger("4FC0252E553ECD05D4F72DCFAD55C8E7", 16)),
-                        new Triplet<>("Z1-recovery-ds.pem", "90B3D51F30000001",
-                                        new BigInteger("469AFEC2E7C0CAAEC8A400769B702BC8", 16)),
-                        new Triplet<>("Z1-supplier-ds.pem", "90B3D51F30010000",
-                                        new BigInteger("4FBC525201A1D7586C1BC1C4734DEB9F", 16)),
-                        new Triplet<>("Z1-supplier2-ds.pem", "90B3D51F30030000",
-                                        new BigInteger("39EAFF0055CE4DAF085AC874C7C84BD3", 16)),
-                        new Triplet<>("Z1-transitionalCoS-ds.pem", "90B3D51F30000004",
-                                        new BigInteger("3CE369AB08F102975C5490D6B88FC066", 16)),
-                        new Triplet<>("Z1-wanProvider-ds.pem", "90B3D51F30000007",
-                                        new BigInteger("7C758B23CC7FE6923B01921F557D8B0A", 16)));
 
         private List<Triplet<String, String, BigInteger>> testData_xmlSign = Arrays.asList(
                         new Triplet<>("Z1-accessControlBroker-ds.pem", "90B3D51F30000002",

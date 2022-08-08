@@ -28,15 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class CertificateLibrary {
-  private static String[] certificate_names_original = {
-      "Z1-accessControlBroker-ds",
-      "Z1-networkOperator-ds",
-      "Z1-recovery-ds",
-      "Z1-supplier-ds",
-      "Z1-supplier2-ds",
-      "Z1-transitionalCoS-ds",
-      "Z1-wanProvider-ds",
-  };
   private static String[] certificate_names_xmlSign = {
       "Z1-accessControlBroker-ds",
       "xml-sign-90B3D51F30020000-ds",

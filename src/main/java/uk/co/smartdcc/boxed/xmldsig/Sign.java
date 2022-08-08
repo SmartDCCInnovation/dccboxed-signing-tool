@@ -38,7 +38,6 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -138,8 +137,6 @@ public class Sign {
 
       TransformerFactory tf = TransformerFactory.newInstance();
       Transformer trans = tf.newTransformer();
-      //trans.setOutputProperty(OutputKeys.INDENT, "yes");
-      //trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
       trans.transform(new DOMSource(doc), new StreamResult(System.out));
     } catch (Exception e) {
       System.err.println("[E] internal error: " + e.getMessage());
