@@ -21,6 +21,7 @@ import java.security.PrivateKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,8 +50,10 @@ import org.w3c.dom.NodeList;
 
 public class Sign {
   public static int main_aux(String[] args) {
+    Boolean preserveCouner = Arrays.stream(args).anyMatch("--preserveCounter"::equals);
+    args = Arrays.stream(args).filter(x -> !("--preserveCounter".equals(x))).toArray(String[]::new);
     if (args.length < 1 || args.length > 3) {
-      System.err.println("[I] usage: message.xml [signingcert.pem] [signingkey.key]");
+      System.err.println("[I] usage: message.xml [--preserveCounter] [signingcert.pem] [signingkey.key]");
       if (args.length == 0) {
         System.err.println("[E] message not provided");
         return 2;
@@ -75,7 +78,9 @@ public class Sign {
 
     Node requestId = doc.getElementsByTagNameNS("http://www.dccinterface.co.uk/ServiceUserGateway", "RequestID")
         .item(0);
-    requestId.setTextContent(requestId.getTextContent().split("[0-9]*$", 2)[0] + System.currentTimeMillis());
+    if (!preserveCouner) {
+      requestId.setTextContent(requestId.getTextContent().split("[0-9]*$", 2)[0] + System.currentTimeMillis());
+    }
 
     CertificateFactory fact = Util.create_certificate_factory();
     X509Certificate cer = null;

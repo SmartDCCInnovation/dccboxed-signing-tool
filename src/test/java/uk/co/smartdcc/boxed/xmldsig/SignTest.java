@@ -105,6 +105,33 @@ public class SignTest {
       });
       Assertions.assertEquals(0, statusCode);
     });
+    Assertions.assertFalse(out.contains("90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000"));
     Assertions.assertTrue(out.contains("xmlns:sr=\"http://www.dccinterface.co.uk/ServiceUserGateway\""));
+  }
+
+  @Test
+  void nominalPreserveCounter1() throws Exception {
+    String file_name = UtilTest.class.getClassLoader()
+        .getResource("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML").getFile();
+    String out = SystemLambda.tapSystemOut(() -> {
+      int statusCode = SystemLambda.catchSystemExit(() -> {
+        Sign.main(new String[] { "--preserveCounter", file_name });
+      });
+      Assertions.assertEquals(0, statusCode);
+    });
+    Assertions.assertTrue(out.contains("90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000"));
+  }
+
+  @Test
+  void nominalPreserveCounter2() throws Exception {
+    String file_name = UtilTest.class.getClassLoader()
+        .getResource("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML").getFile();
+    String out = SystemLambda.tapSystemOut(() -> {
+      int statusCode = SystemLambda.catchSystemExit(() -> {
+        Sign.main(new String[] { file_name, "--preserveCounter" });
+      });
+      Assertions.assertEquals(0, statusCode);
+    });
+    Assertions.assertTrue(out.contains("90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000"));
   }
 }

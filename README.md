@@ -75,6 +75,8 @@ java -cp xmldsig-1.0-SNAPSHOT.jar uk.co.smartdcc.boxed.xmldsig.Sign CS08_11.2_SU
 
 #### Advanced Signing
 
+##### Key Material
+
 By default the tool will inspect the DUIS request to determine which private key
 corresponds to the message to sign. This should cover the majority of the use
 cases of the tool. However, it is also possible to provide the signers
@@ -88,6 +90,14 @@ Here the `user.pem` and `user.key` are the associated certificate and private
 key for the signer. These should both be of the correct format as defined by
 SMKI, especially they need to be formatted as `pem` and the private key is both
 EC prime256v1 and in the PKCS8 format. 
+
+##### Counters
+
+DCC Boxed internally generates counters for any message sent from its GUI
+devices using `System.currentMillis`. Thus, to ensure compatibility this tool
+will by default also do the same and overwrite the counter provided in the
+request id of the DUIS message. If this behaviour is not desired, then the
+`--preserveCounter` option can be given to the signing tool.
 
 ### Validate DUIS
 
