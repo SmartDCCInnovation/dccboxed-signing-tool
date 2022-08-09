@@ -146,7 +146,7 @@ the tool and there is unit test coverage.
 
 ## Other Info
 
-Copyright 2022, Smart DCC Limited, All rights reserved. Project is licensed under GLPv3.
+Copyright 2022, Smart DCC Limited, All rights reserved. Project is licensed under GPLv3.
 
 [boxed]: https://www.smartdcc.co.uk/our-smart-network/network-products-services/dcc-boxed/ "DCC Boxed"
 [gfi]: https://www.smartdcc.co.uk/our-smart-network/network-products-services/gfi/ "GFI"
