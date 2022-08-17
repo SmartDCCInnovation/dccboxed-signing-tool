@@ -29,7 +29,7 @@ import java.util.List;
 
 public final class CertificateLibrary {
   private static String[] certificate_names_xmlSign = {
-      "Z1-accessControlBroker-ds",
+      "dsp-xml-sign-90B3D51F30000002-ds",
       "xml-sign-90B3D51F30020000-ds",
       "Z1-recovery-ds",
       "xml-sign-90B3D51F30010000-ds",
