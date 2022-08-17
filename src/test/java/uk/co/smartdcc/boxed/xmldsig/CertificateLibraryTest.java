@@ -39,7 +39,7 @@ public class CertificateLibraryTest {
 
         private List<Triplet<String, String, BigInteger>> testData_xmlSign = Arrays.asList(
                         new Triplet<>("Z1-accessControlBroker-ds.pem", "90B3D51F30000002",
-                                        new BigInteger("587FE59553E2675B0C0E2A5C402A9F61", 16)),
+                                        new BigInteger("261E9CCC40A78FD13D83BCE07DACFE08", 16)),
                         new Triplet<>("Z1-networkOperator-ds.pem", "90B3D51F30020000",
                                         new BigInteger("1ECC6ED40F92A82835DB58174B4A666D", 16)),
                         new Triplet<>("Z1-recovery-ds.pem", "90B3D51F30000001",
