@@ -51,7 +51,9 @@ public class CertificateLibraryTest {
                         new Triplet<>("Z1-transitionalCoS-ds.pem", "90B3D51F30000004",
                                         new BigInteger("3CE369AB08F102975C5490D6B88FC066", 16)),
                         new Triplet<>("Z1-wanProvider-ds.pem", "90B3D51F30000007",
-                                        new BigInteger("7C758B23CC7FE6923B01921F557D8B0A", 16)));
+                                        new BigInteger("7C758B23CC7FE6923B01921F557D8B0A", 16)),
+                        new Triplet<>("Other User", "00DB123456780004",
+                                        new BigInteger("1C063B7B4F241AADA23FFFF28E88B927", 16)));
 
         private List<Triplet<String, String, BigInteger>> testData = testData_xmlSign;
 
