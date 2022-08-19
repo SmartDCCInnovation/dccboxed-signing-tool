@@ -134,4 +134,19 @@ public class SignTest {
     });
     Assertions.assertTrue(out.contains("90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000"));
   }
+
+  @Test
+  void nominalOtherUser() throws Exception {
+    String file_name = UtilTest.class.getClassLoader()
+        .getResource("ECS50_9.1_SUCCESS_REQUEST_DUIS.XML").getFile();
+    String out = SystemLambda.tapSystemOut(() -> {
+      int statusCode = SystemLambda.catchSystemExit(() -> {
+        Sign.main(new String[] { file_name });
+      });
+      Assertions.assertEquals(0, statusCode);
+    });
+    Assertions.assertFalse(out.contains("00-db-12-34-56-78-00-04:00-DB-12-34-56-78-90-A0:1000"));
+    Assertions.assertTrue(out.contains("xmlns:sr=\"http://www.dccinterface.co.uk/ServiceUserGateway\""));
+    Assertions.assertTrue(out.contains("00-db-12-34-56-78-00-04:00-DB-12-34-56-78-90-A0:"));
+  }
 }
