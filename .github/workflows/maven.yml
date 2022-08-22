@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-      - codecov*
-      - dccboxed-*
   pull_request:
     branches:
       - main
       - codecov*
+      - dccboxed-*
 
 jobs:
   test:
