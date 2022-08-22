@@ -141,4 +141,8 @@ public final class CertificateLibrary {
     }
     return null;
   }
+
+  public int getNumber() {
+    return 555;
+  }
 }
