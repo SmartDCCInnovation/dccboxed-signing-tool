@@ -37,20 +37,23 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-public class Validate {
-  public static int main_aux(String[] args) {
+public final class Validate {
+  private Validate() {
+  }
+
+  public static ResultCode main_aux(final String[] args) {
     if (args.length < 1 || args.length > 2) {
       System.err.println("[I] usage: message.xml [signingcert.pem]");
       if (args.length == 0) {
         System.err.println("[E] message not provided");
-        return 2;
+        return ResultCode.GENERIC_ERROR;
       }
     }
 
     Document doc = Util.load_duis_file_checked(args[0]);
     if (doc == null) {
       System.err.println("[I] failed xsd validation");
-      return 10;
+      return ResultCode.VALIDATION_FAIL;
     }
     System.err.println("[I] passed xsd validation");
 
@@ -68,12 +71,12 @@ public class Validate {
           trans.transform(new DOMSource(doc), new StreamResult(System.out));
         } catch (Exception e) {
           System.err.println("[E] internal error");
-          return 2;
+          return ResultCode.GENERIC_ERROR;
         }
-        return 0;
+        return ResultCode.SUCCESS;
       }
       System.err.println("[W] signature missing, validation check skipped");
-      return 10;
+      return ResultCode.VALIDATION_FAIL;
     }
 
     CertificateFactory fact = Util.create_certificate_factory();
@@ -87,9 +90,9 @@ public class Validate {
         cer = CertificateLibrary.getInstance().lookup(new BigInteger(nl.item(0).getTextContent()));
       }
       if (cer == null) {
-        System.err.println(
-            "[E] could not locate certificate for: " + (nl.getLength() >= 1 ? nl.item(0).getTextContent() : "unknown"));
-        return 3;
+        String sn = nl.getLength() >= 1 ? nl.item(0).getTextContent() : "unknown";
+        System.err.println("[E] could not locate certificate for: " + sn);
+        return ResultCode.MISSING_KEY;
       }
     }
     PublicKey key = cer.getPublicKey();
@@ -115,14 +118,14 @@ public class Validate {
       }
     } catch (Exception e) {
       System.err.println("[E] internal error: " + e.getMessage());
-      return 2;
+      return ResultCode.GENERIC_ERROR;
     }
 
     System.err.println("[I] " + (coreValidity ? "passed" : "failed") + " signature check");
-    return coreValidity ? 0 : 10;
+    return coreValidity ? ResultCode.SUCCESS : ResultCode.VALIDATION_FAIL;
   }
 
-  public static void main(String[] args) {
-    System.exit(main_aux(args));
+  public static void main(final String[] args) {
+    System.exit(main_aux(args).value());
   }
 }

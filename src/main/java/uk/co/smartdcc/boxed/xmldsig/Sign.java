@@ -48,22 +48,30 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Sign {
-  public static int main_aux(String[] args) {
-    Boolean preserveCouner = Arrays.stream(args).anyMatch("--preserveCounter"::equals);
-    args = Arrays.stream(args).filter(x -> !("--preserveCounter".equals(x))).toArray(String[]::new);
+public final class Sign {
+  private Sign() {
+  }
+
+  public static ResultCode main_aux(final String[] arguments) {
+    Boolean preserveCouner = Arrays.stream(arguments).anyMatch("--preserveCounter"::equals);
+    String[] args = Arrays
+        .stream(arguments)
+        .filter(x -> !("--preserveCounter".equals(x)))
+        .toArray(String[]::new);
     if (args.length < 1 || args.length > 3) {
-      System.err.println("[I] usage: message.xml [--preserveCounter] [signingcert.pem] [signingkey.key]");
+      System.err.println(
+          "[I] usage: message.xml [--preserveCounter] [signingcert.pem] [signingkey.key]"
+      );
       if (args.length == 0) {
         System.err.println("[E] message not provided");
-        return 2;
+        return ResultCode.GENERIC_ERROR;
       }
     }
 
     Document doc = Util.load_duis_file_checked(args[0]);
     if (doc == null) {
       System.err.println("[I] failed xsd validation");
-      return 10;
+      return ResultCode.VALIDATION_FAIL;
     }
     System.err.println("[I] passed xsd validation");
 
@@ -76,10 +84,15 @@ public class Sign {
       }
     }
 
-    Node requestId = doc.getElementsByTagNameNS("http://www.dccinterface.co.uk/ServiceUserGateway", "RequestID")
+    Node requestId = doc.getElementsByTagNameNS(
+        "http://www.dccinterface.co.uk/ServiceUserGateway",
+        "RequestID"
+    )
         .item(0);
     if (!preserveCouner) {
-      requestId.setTextContent(requestId.getTextContent().split("[0-9]*$", 2)[0] + System.currentTimeMillis());
+      requestId.setTextContent(
+          requestId.getTextContent().split("[0-9]*$", 2)[0] + System.currentTimeMillis()
+      );
     }
 
     CertificateFactory fact = Util.create_certificate_factory();
@@ -92,7 +105,7 @@ public class Sign {
       cer = CertificateLibrary.getInstance().lookup(businessOriginatorId);
       if (cer == null) {
         System.err.println("[E] could not locate certificate for: " + businessOriginatorId);
-        return 3;
+        return ResultCode.MISSING_KEY;
       }
     }
     System.err.println("[I] certificate serial number: " + cer.getSerialNumber());
@@ -106,7 +119,7 @@ public class Sign {
       pkey = CertificateLibrary.getInstance().lookup_key(businessOriginatorId);
       if (pkey == null) {
         System.err.println("[E] could not locate private key for: " + businessOriginatorId);
-        return 3;
+        return ResultCode.MISSING_KEY;
       }
     }
 
@@ -121,18 +134,29 @@ public class Sign {
           "",
           fac.newDigestMethod(DigestMethod.SHA256, null),
           Collections.singletonList(
-              fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)),
-          null, null);
+              fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)
+          ),
+          null, null
+      );
 
       SignedInfo si = null;
       si = fac.newSignedInfo(
-          fac.newCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, (C14NMethodParameterSpec) null),
+          fac.newCanonicalizationMethod(
+              CanonicalizationMethod.EXCLUSIVE,
+              (C14NMethodParameterSpec) null
+          ),
           fac.newSignatureMethod(SignatureMethod.ECDSA_SHA256, null),
-          Collections.singletonList(ref));
+          Collections.singletonList(ref)
+      );
 
       KeyInfoFactory kif = fac.getKeyInfoFactory();
       List<Object> x509Content = new ArrayList<Object>();
-      x509Content.add(kif.newX509IssuerSerial(cer.getIssuerX500Principal().getName(), cer.getSerialNumber()));
+      x509Content.add(
+          kif.newX509IssuerSerial(
+              cer.getIssuerX500Principal().getName(),
+              cer.getSerialNumber()
+          )
+      );
       X509Data xd = kif.newX509Data(x509Content);
       KeyInfo ki = kif.newKeyInfo(Collections.singletonList(xd));
 
@@ -145,12 +169,12 @@ public class Sign {
       trans.transform(new DOMSource(doc), new StreamResult(System.out));
     } catch (Exception e) {
       System.err.println("[E] internal error: " + e.getMessage());
-      return 2;
+      return ResultCode.GENERIC_ERROR;
     }
-    return 0;
+    return ResultCode.SUCCESS;
   }
 
-  public static void main(String[] args) {
-    System.exit(main_aux(args));
+  public static void main(final String[] args) {
+    System.exit(main_aux(args).value());
   }
 }
