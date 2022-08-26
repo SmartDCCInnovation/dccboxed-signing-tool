@@ -152,11 +152,15 @@ When submitting a pull request, please ensure:
      run `mvn test` to generate code coverage metrics.
   3. Bugfixes include reference the GitHub issue.
   4. If appropriate, update documentation.
+  5. Before committing, run `mvn checkstyle:check` and `mvn formatter:validate`.
 
 If you are planning a new non-trivial feature, please first raise a GitHub issue
 to discuss it to before investing your time to avoid disappointment.
 
 Any contributions will be expected to be licensable under GPLv3.
+
+As a convenience, to ensure code is correctly formatted it is possible to run
+`mvn formatter:format` to automatically format files as required.
 
 ## Other Info
 
