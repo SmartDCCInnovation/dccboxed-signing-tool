@@ -53,6 +53,13 @@ public final class CertificateLibrary {
     return INSTANCE;
   }
 
+  private class Bad {
+    private int bad;
+    Bad(int bad) {
+      this.bad = bad;
+    }
+  }
+
   private class Tuple {
     private String _businessId;
     private X509Certificate _certificate;
