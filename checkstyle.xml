@@ -38,7 +38,7 @@
       https://checkstyle.org/config.html#Checker
   -->
 
-  <property name="basedir" value="${basedir}/src/main"/>
+  <property name="basedir" value="${basedir}"/>
   <property name="severity" value="error"/>
 
   <property name="fileExtensions" value="java, properties, xml"/>
