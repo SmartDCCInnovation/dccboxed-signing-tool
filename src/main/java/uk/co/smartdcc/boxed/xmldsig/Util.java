@@ -83,7 +83,7 @@ public final class Util {
     return dbf;
   }
 
-  public static Document load_duis_file_checked(String file_name) {
+  public static Document load_duis_file_checked(final String file_name) {
     try {
       return load_duis_file(file_name);
     } catch (FileNotFoundException e) {
@@ -99,7 +99,7 @@ public final class Util {
     return null;
   }
 
-  public static Document load_duis_file(String file_name)
+  public static Document load_duis_file(final String file_name)
       throws FileNotFoundException, IOException, SAXException, ParserConfigurationException {
     DocumentBuilderFactory dbf = create_document_builder_factory();
     Document doc = null;
@@ -151,7 +151,10 @@ public final class Util {
     return keyFactory;
   }
 
-  public static X509Certificate load_certificate_checked(CertificateFactory f, String file_name) {
+  public static X509Certificate load_certificate_checked(
+      final CertificateFactory f,
+      final String file_name
+  ) {
     try {
       return load_certificate(f, file_name);
     } catch (FileNotFoundException e) {
@@ -159,11 +162,14 @@ public final class Util {
     } catch (CertificateException e) {
       System.err.println("[E] cert file could not be loaded");
     }
-    System.exit(3);
+    System.exit(ResultCode.MISSING_KEY.value());
     return null;
   }
 
-  public static X509Certificate load_certificate(CertificateFactory f, String file_name)
+  public static X509Certificate load_certificate(
+      final CertificateFactory f,
+      final String file_name
+  )
       throws FileNotFoundException, CertificateException {
     X509Certificate cer = null;
     FileInputStream is = null;
@@ -181,7 +187,7 @@ public final class Util {
     return cer;
   }
 
-  public static PrivateKey load_key_checked(KeyFactory f, String file_name) {
+  public static PrivateKey load_key_checked(final KeyFactory f, final String file_name) {
     try {
       return load_key(f, file_name);
     } catch (FileNotFoundException e) {
@@ -191,11 +197,11 @@ public final class Util {
     } catch (InvalidKeySpecException e) {
       System.err.println("[E] privkey could not be parsed");
     }
-    System.exit(3);
+    System.exit(ResultCode.MISSING_KEY.value());
     return null;
   }
 
-  public static PrivateKey load_key(KeyFactory f, String file_name)
+  public static PrivateKey load_key(final KeyFactory f, final String file_name)
       throws FileNotFoundException, IOException, InvalidKeySpecException {
     String privkey = "";
     FileInputStream is = null;

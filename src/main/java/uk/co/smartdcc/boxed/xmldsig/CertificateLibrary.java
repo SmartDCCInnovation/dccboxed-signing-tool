@@ -55,18 +55,30 @@ public final class CertificateLibrary {
   }
 
   private class Tuple {
-    String businessId;
-    X509Certificate certificate;
-    PrivateKey key;
+    private String _businessId;
+    private X509Certificate _certificate;
+    private PrivateKey _key;
 
-    Tuple(String businessId, X509Certificate certificate, PrivateKey key) {
-      this.businessId = businessId;
-      this.certificate = certificate;
-      this.key = key;
+    public String getBusinessId() {
+      return _businessId;
+    }
+
+    public X509Certificate getCertificate() {
+      return _certificate;
+    }
+
+    public PrivateKey getKey() {
+      return _key;
+    }
+
+    Tuple(final String businessId, final X509Certificate certificate, final PrivateKey key) {
+      this._businessId = businessId;
+      this._certificate = certificate;
+      this._key = key;
     }
   }
 
-  List<Tuple> certificates = new ArrayList<Tuple>();
+  private List<Tuple> certificates = new ArrayList<Tuple>();
 
   private CertificateLibrary() throws Exception {
     CertificateFactory fact = Util.create_certificate_factory();
@@ -99,45 +111,39 @@ public final class CertificateLibrary {
     }
   }
 
-  public X509Certificate lookup(String businessId) {
-    if (businessId.contains("-")) {
-      businessId = businessId.replace("-", "");
-    }
-    businessId = businessId.toLowerCase();
+  public X509Certificate lookup(final String businessId) {
+    String id = businessId.replace("-", "").toLowerCase();
     for (Tuple t : this.certificates) {
-      if (t.businessId.equals(businessId)) {
-        return t.certificate;
+      if (t.getBusinessId().equals(id)) {
+        return t.getCertificate();
       }
     }
     return null;
   }
 
-  public X509Certificate lookup(BigInteger serial) {
+  public X509Certificate lookup(final BigInteger serial) {
     for (Tuple t : this.certificates) {
-      if (t.certificate.getSerialNumber().equals(serial)) {
-        return t.certificate;
+      if (t.getCertificate().getSerialNumber().equals(serial)) {
+        return t.getCertificate();
       }
     }
     return null;
   }
 
-  public PrivateKey lookup_key(String businessId) {
-    if (businessId.contains("-")) {
-      businessId = businessId.replace("-", "");
-    }
-    businessId = businessId.toLowerCase();
+  public PrivateKey lookup_key(final String businessId) {
+    String id = businessId.replace("-", "").toLowerCase();
     for (Tuple t : this.certificates) {
-      if (t.businessId.equals(businessId)) {
-        return t.key;
+      if (t.getBusinessId().equals(id)) {
+        return t.getKey();
       }
     }
     return null;
   }
 
-  public PrivateKey lookup_key(BigInteger serial) {
+  public PrivateKey lookup_key(final BigInteger serial) {
     for (Tuple t : this.certificates) {
-      if (t.certificate.getSerialNumber().equals(serial)) {
-        return t.key;
+      if (t.getCertificate().getSerialNumber().equals(serial)) {
+        return t.getKey();
       }
     }
     return null;

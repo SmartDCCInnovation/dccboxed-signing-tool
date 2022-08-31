@@ -37,209 +37,230 @@ import org.junit.jupiter.api.BeforeEach;
 
 public class CertificateLibraryTest {
 
-        private List<Triplet<String, String, BigInteger>> testData_xmlSign = Arrays.asList(
-                        new Triplet<>("Z1-accessControlBroker-ds.pem", "90B3D51F30000002",
-                                        new BigInteger("261E9CCC40A78FD13D83BCE07DACFE08", 16)),
-                        new Triplet<>("Z1-networkOperator-ds.pem", "90B3D51F30020000",
-                                        new BigInteger("1ECC6ED40F92A82835DB58174B4A666D", 16)),
-                        new Triplet<>("Z1-recovery-ds.pem", "90B3D51F30000001",
-                                        new BigInteger("469AFEC2E7C0CAAEC8A400769B702BC8", 16)),
-                        new Triplet<>("Z1-supplier-ds.pem", "90B3D51F30010000",
-                                        new BigInteger("14BE4AD2EA1D0E4EC7F7156BD24624A7", 16)),
-                        new Triplet<>("Z1-supplier2-ds.pem", "90B3D51F30030000",
-                                        new BigInteger("39EAFF0055CE4DAF085AC874C7C84BD3", 16)),
-                        new Triplet<>("Z1-transitionalCoS-ds.pem", "90B3D51F30000004",
-                                        new BigInteger("3CE369AB08F102975C5490D6B88FC066", 16)),
-                        new Triplet<>("Z1-wanProvider-ds.pem", "90B3D51F30000007",
-                                        new BigInteger("7C758B23CC7FE6923B01921F557D8B0A", 16)),
-                        new Triplet<>("Other User", "00DB123456780004",
-                                        new BigInteger("1C063B7B4F241AADA23FFFF28E88B927", 16)));
+  private List<Triplet<String, String, BigInteger>> testData_xmlSign = Arrays.asList(
+      new Triplet<>(
+          "Z1-accessControlBroker-ds.pem", "90B3D51F30000002",
+          new BigInteger("261E9CCC40A78FD13D83BCE07DACFE08", 16)
+      ),
+      new Triplet<>(
+          "Z1-networkOperator-ds.pem", "90B3D51F30020000",
+          new BigInteger("1ECC6ED40F92A82835DB58174B4A666D", 16)
+      ),
+      new Triplet<>(
+          "Z1-recovery-ds.pem", "90B3D51F30000001",
+          new BigInteger("469AFEC2E7C0CAAEC8A400769B702BC8", 16)
+      ),
+      new Triplet<>(
+          "Z1-supplier-ds.pem", "90B3D51F30010000",
+          new BigInteger("14BE4AD2EA1D0E4EC7F7156BD24624A7", 16)
+      ),
+      new Triplet<>(
+          "Z1-supplier2-ds.pem", "90B3D51F30030000",
+          new BigInteger("39EAFF0055CE4DAF085AC874C7C84BD3", 16)
+      ),
+      new Triplet<>(
+          "Z1-transitionalCoS-ds.pem", "90B3D51F30000004",
+          new BigInteger("3CE369AB08F102975C5490D6B88FC066", 16)
+      ),
+      new Triplet<>(
+          "Z1-wanProvider-ds.pem", "90B3D51F30000007",
+          new BigInteger("7C758B23CC7FE6923B01921F557D8B0A", 16)
+      ),
+      new Triplet<>(
+          "Other User", "00DB123456780004",
+          new BigInteger("1C063B7B4F241AADA23FFFF28E88B927", 16)
+      )
+  );
 
-        private List<Triplet<String, String, BigInteger>> testData = testData_xmlSign;
+  private List<Triplet<String, String, BigInteger>> testData = testData_xmlSign;
 
-        private static String[] certificate_names;
+  private static String[] certificate_names;
 
-        @BeforeAll
-        public static void beforeAll() throws Exception {
-                Field field = CertificateLibrary.class.getDeclaredField("certificate_names");
-                field.setAccessible(true);
-                certificate_names = ((String[]) field.get(null)).clone();
-        }
+  @BeforeAll
+  public static void beforeAll() throws Exception {
+    Field field = CertificateLibrary.class.getDeclaredField("certificate_names");
+    field.setAccessible(true);
+    certificate_names = ((String[]) field.get(null)).clone();
+  }
 
-        @BeforeEach
-        public void beforeEach() throws Exception {
-                Field cert_names = CertificateLibrary.class.getDeclaredField("certificate_names");
-                cert_names.setAccessible(true);
-                cert_names.set(null, certificate_names.clone());
+  @BeforeEach
+  public void beforeEach() throws Exception {
+    Field cert_names = CertificateLibrary.class.getDeclaredField("certificate_names");
+    cert_names.setAccessible(true);
+    cert_names.set(null, certificate_names.clone());
 
-                Field instance = CertificateLibrary.class.getDeclaredField("INSTANCE");
-                instance.setAccessible(true);
-                instance.set(null, null);
-        }
+    Field instance = CertificateLibrary.class.getDeclaredField("INSTANCE");
+    instance.setAccessible(true);
+    instance.set(null, null);
+  }
 
-        @Test
-        public void certificateLibraryCreate() {
-                Assertions.assertNotNull(CertificateLibrary.getInstance());
-        }
+  @Test
+  public void certificateLibraryCreate() {
+    Assertions.assertNotNull(CertificateLibrary.getInstance());
+  }
 
-        private void containsUserCertificate(String businessId, Triplet<String, String, BigInteger> triple) {
-                X509Certificate cert = CertificateLibrary.getInstance().lookup(businessId);
-                Assertions.assertNotNull(cert, triple.getValue0());
-                Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
-        }
+  private void containsUserCertificate(String businessId, Triplet<String, String, BigInteger> triple) {
+    X509Certificate cert = CertificateLibrary.getInstance().lookup(businessId);
+    Assertions.assertNotNull(cert, triple.getValue0());
+    Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
+  }
 
-        @Test
-        public void containsUserCertificatesByBusinessIDNoHyphan() {
-                testData.forEach(triple -> {
-                        String businessId = String.join("-", triple.getValue1());
-                        containsUserCertificate(businessId, triple);
-                });
-        }
+  @Test
+  public void containsUserCertificatesByBusinessIDNoHyphan() {
+    testData.forEach(triple -> {
+      String businessId = String.join("-", triple.getValue1());
+      containsUserCertificate(businessId, triple);
+    });
+  }
 
-        @Test
-        public void containsUserCertificatesByBusinessIDHyphan() {
-                testData.forEach(triple -> {
-                        String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})"));
-                        containsUserCertificate(businessId, triple);
-                });
-        }
+  @Test
+  public void containsUserCertificatesByBusinessIDHyphan() {
+    testData.forEach(triple -> {
+      String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})"));
+      containsUserCertificate(businessId, triple);
+    });
+  }
 
-        @Test
-        public void containsUserCertificatesByBusinessIDNoHyphanLower() {
-                testData.forEach(triple -> {
-                        String businessId = triple.getValue1().toLowerCase();
-                        containsUserCertificate(businessId, triple);
-                });
-        }
+  @Test
+  public void containsUserCertificatesByBusinessIDNoHyphanLower() {
+    testData.forEach(triple -> {
+      String businessId = triple.getValue1().toLowerCase();
+      containsUserCertificate(businessId, triple);
+    });
+  }
 
-        @Test
-        public void containsUserCertificatesByBusinessIDHyphanLower() {
-                testData.forEach(triple -> {
-                        String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})")).toLowerCase();
-                        containsUserCertificate(businessId, triple);
-                });
-        }
+  @Test
+  public void containsUserCertificatesByBusinessIDHyphanLower() {
+    testData.forEach(triple -> {
+      String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})")).toLowerCase();
+      containsUserCertificate(businessId, triple);
+    });
+  }
 
-        @Test
-        public void containsUserCertificatesBySerial() {
-                testData.forEach(triple -> {
-                        X509Certificate cert = CertificateLibrary.getInstance().lookup(triple.getValue2());
-                        Assertions.assertNotNull(cert, triple.getValue0());
-                        Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
-                });
-        }
+  @Test
+  public void containsUserCertificatesBySerial() {
+    testData.forEach(triple -> {
+      X509Certificate cert = CertificateLibrary.getInstance().lookup(triple.getValue2());
+      Assertions.assertNotNull(cert, triple.getValue0());
+      Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
+    });
+  }
 
-        private void containsUserKey(String businessId, Triplet<String, String, BigInteger> triple) {
-                byte[] data = "hello".getBytes();
-                X509Certificate cert = CertificateLibrary.getInstance().lookup(businessId);
-                Assertions.assertNotNull(cert, triple.getValue0());
-                Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
-                PublicKey pubKey = cert.getPublicKey();
-                PrivateKey privKey = CertificateLibrary.getInstance().lookup_key(businessId);
+  private void containsUserKey(String businessId, Triplet<String, String, BigInteger> triple) {
+    byte[] data = "hello".getBytes();
+    X509Certificate cert = CertificateLibrary.getInstance().lookup(businessId);
+    Assertions.assertNotNull(cert, triple.getValue0());
+    Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
+    PublicKey pubKey = cert.getPublicKey();
+    PrivateKey privKey = CertificateLibrary.getInstance().lookup_key(businessId);
 
-                try {
-                        Signature signer = Signature.getInstance("SHA256withECDSA");
-                        signer.initSign(privKey);
-                        signer.update(data);
-                        byte[] signature = signer.sign();
+    try {
+      Signature signer = Signature.getInstance("SHA256withECDSA");
+      signer.initSign(privKey);
+      signer.update(data);
+      byte[] signature = signer.sign();
 
-                        Signature verifier = Signature.getInstance("SHA256withECDSA");
-                        verifier.initVerify(pubKey);
-                        verifier.update(data);
-                        Assertions.assertTrue(verifier.verify(signature),
-                                        "pub/private key check failed for " + triple.getValue0());
-                } catch (Exception exception) {
-                        Assertions.fail(exception.toString());
-                }
-        }
+      Signature verifier = Signature.getInstance("SHA256withECDSA");
+      verifier.initVerify(pubKey);
+      verifier.update(data);
+      Assertions.assertTrue(
+          verifier.verify(signature),
+          "pub/private key check failed for " + triple.getValue0()
+      );
+    } catch (Exception exception) {
+      Assertions.fail(exception.toString());
+    }
+  }
 
-        @Test
-        public void containsUserKeyByBusinessIDNoHyphan() {
-                testData.forEach(triple -> {
-                        String businessId = triple.getValue1();
-                        containsUserKey(businessId, triple);
-                });
-        }
+  @Test
+  public void containsUserKeyByBusinessIDNoHyphan() {
+    testData.forEach(triple -> {
+      String businessId = triple.getValue1();
+      containsUserKey(businessId, triple);
+    });
+  }
 
-        @Test
-        public void containsUserKeyByBusinessIDHyphan() {
-                testData.forEach(triple -> {
-                        String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})"));
-                        containsUserKey(businessId, triple);
-                });
-        }
+  @Test
+  public void containsUserKeyByBusinessIDHyphan() {
+    testData.forEach(triple -> {
+      String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})"));
+      containsUserKey(businessId, triple);
+    });
+  }
 
-        public void containsUserKeyByBusinessIDNoHyphanLower() {
-                testData.forEach(triple -> {
-                        String businessId = triple.getValue1().toLowerCase();
-                        containsUserKey(businessId, triple);
-                });
-        }
+  public void containsUserKeyByBusinessIDNoHyphanLower() {
+    testData.forEach(triple -> {
+      String businessId = triple.getValue1().toLowerCase();
+      containsUserKey(businessId, triple);
+    });
+  }
 
-        @Test
-        public void containsUserKeyByBusinessIDHyphanLower() {
-                testData.forEach(triple -> {
-                        String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})")).toLowerCase();
-                        containsUserKey(businessId, triple);
-                });
-        }
+  @Test
+  public void containsUserKeyByBusinessIDHyphanLower() {
+    testData.forEach(triple -> {
+      String businessId = String.join("-", triple.getValue1().split("(?<=\\G.{2})")).toLowerCase();
+      containsUserKey(businessId, triple);
+    });
+  }
 
-        @Test
-        public void containsUserKeyBySerial() {
-                byte[] data = "hello".getBytes();
-                testData.forEach(triple -> {
-                        String businessId = triple.getValue1();
-                        X509Certificate cert = CertificateLibrary.getInstance().lookup(businessId);
-                        Assertions.assertNotNull(cert, triple.getValue0());
-                        Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
-                        PublicKey pubKey = cert.getPublicKey();
-                        PrivateKey privKey = CertificateLibrary.getInstance().lookup_key(triple.getValue2());
+  @Test
+  public void containsUserKeyBySerial() {
+    byte[] data = "hello".getBytes();
+    testData.forEach(triple -> {
+      String businessId = triple.getValue1();
+      X509Certificate cert = CertificateLibrary.getInstance().lookup(businessId);
+      Assertions.assertNotNull(cert, triple.getValue0());
+      Assertions.assertEquals(triple.getValue2(), cert.getSerialNumber(), triple.getValue0());
+      PublicKey pubKey = cert.getPublicKey();
+      PrivateKey privKey = CertificateLibrary.getInstance().lookup_key(triple.getValue2());
 
-                        try {
-                                Signature signer = Signature.getInstance("SHA256withECDSA");
-                                signer.initSign(privKey);
-                                signer.update(data);
-                                byte[] signature = signer.sign();
+      try {
+        Signature signer = Signature.getInstance("SHA256withECDSA");
+        signer.initSign(privKey);
+        signer.update(data);
+        byte[] signature = signer.sign();
 
-                                Signature verifier = Signature.getInstance("SHA256withECDSA");
-                                verifier.initVerify(pubKey);
-                                verifier.update(data);
-                                Assertions.assertTrue(verifier.verify(signature),
-                                                "pub/private key check failed for " + triple.getValue0());
-                        } catch (Exception exception) {
-                                Assertions.fail(exception.toString());
-                        }
-                });
-        }
+        Signature verifier = Signature.getInstance("SHA256withECDSA");
+        verifier.initVerify(pubKey);
+        verifier.update(data);
+        Assertions.assertTrue(
+            verifier.verify(signature),
+            "pub/private key check failed for " + triple.getValue0()
+        );
+      } catch (Exception exception) {
+        Assertions.fail(exception.toString());
+      }
+    });
+  }
 
-        @Test
-        public void doesNotContainsUserKeyBySerial() {
-                Assertions.assertNull(CertificateLibrary.getInstance().lookup_key(new BigInteger("123")));
-        }
+  @Test
+  public void doesNotContainsUserKeyBySerial() {
+    Assertions.assertNull(CertificateLibrary.getInstance().lookup_key(new BigInteger("123")));
+  }
 
-        @Test
-        public void doesNotContainsUserKeyByBusinessId() {
-                Assertions.assertNull(CertificateLibrary.getInstance().lookup_key("non-exist"));
-        }
+  @Test
+  public void doesNotContainsUserKeyByBusinessId() {
+    Assertions.assertNull(CertificateLibrary.getInstance().lookup_key("non-exist"));
+  }
 
-        @Test
-        public void doesNotContainsUserCertificateBySerial() {
-                Assertions.assertNull(CertificateLibrary.getInstance().lookup(new BigInteger("123")));
-        }
+  @Test
+  public void doesNotContainsUserCertificateBySerial() {
+    Assertions.assertNull(CertificateLibrary.getInstance().lookup(new BigInteger("123")));
+  }
 
-        @Test
-        public void doesNotContainsUserCertificateByBusinessId() {
-                Assertions.assertNull(CertificateLibrary.getInstance().lookup("non-exist"));
-        }
+  @Test
+  public void doesNotContainsUserCertificateByBusinessId() {
+    Assertions.assertNull(CertificateLibrary.getInstance().lookup("non-exist"));
+  }
 
-        @Test
-        public void invalidFile() throws Exception {
-                Field cert_names = CertificateLibrary.class.getDeclaredField("certificate_names");
-                cert_names.setAccessible(true);
-                cert_names.set(null, new String[] { "bad-file-name" });
-                int statusCode = SystemLambda.catchSystemExit(() -> {
-                        CertificateLibrary.getInstance();
-                });
-                Assertions.assertEquals(2, statusCode);
-        }
+  @Test
+  public void invalidFile() throws Exception {
+    Field cert_names = CertificateLibrary.class.getDeclaredField("certificate_names");
+    cert_names.setAccessible(true);
+    cert_names.set(null, new String[] { "bad-file-name" });
+    int statusCode = SystemLambda.catchSystemExit(() -> {
+      CertificateLibrary.getInstance();
+    });
+    Assertions.assertEquals(2, statusCode);
+  }
 }
