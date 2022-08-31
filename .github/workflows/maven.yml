@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - dccboxed-*
-      - checkstyle
+      - checkstyle*
   pull_request:
     branches:
       - main
