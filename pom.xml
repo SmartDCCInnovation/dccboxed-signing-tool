@@ -123,6 +123,7 @@
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <consoleOutput>true</consoleOutput>
+          <propertyExpansion>basedir=${project.basedir}</propertyExpansion>
         </configuration>
       </plugin>
       <plugin>
