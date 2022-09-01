@@ -5,12 +5,14 @@ on:
     branches:
       - main
       - dccboxed-*
+      - reviewdog*
     tags:
       - 'v*'
   pull_request:
     branches:
       - main
       - dccboxed-*
+      - reviewdog*
 
 jobs:
   format:
@@ -44,6 +46,14 @@ jobs:
       uses: reviewdog/action-setup@v1
       with:
         reviewdog_version: latest
+    - name: Select reviewdog reporter
+      id: get-reporter
+      run: |
+        if test "${{ github.event_name }}" = "pull_request"; then
+          echo "::set-output name=reporter::github-pr-review"
+        else
+          echo "::set-output name=reporter::github-check"
+        fi
     - name: Maven install plugins
       run: mvn -B -V dependency:resolve-plugins
     - name: Run checkstyle
@@ -51,7 +61,7 @@ jobs:
     - name: Run reviewdog
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: reviewdog -f=checkstyle -reporter=github-check -fail-on-error < target/checkstyle-result.xml
+      run: reviewdog -f=checkstyle -reporter=${{ steps.get-reporter.outputs.reporter }} -fail-on-error < target/checkstyle-result.xml
 
   test:
     name: Run Tests
