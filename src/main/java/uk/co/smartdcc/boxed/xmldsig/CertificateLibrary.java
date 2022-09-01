@@ -57,7 +57,7 @@ public final class CertificateLibrary {
   private class Tuple {
     private String _businessId;
     private X509Certificate _certificate;
-    private PrivateKey _key;
+    private PrivateKey zkey;
 
     public String getBusinessId() {
       return _businessId;
@@ -68,13 +68,13 @@ public final class CertificateLibrary {
     }
 
     public PrivateKey getKey() {
-      return _key;
+      return zkey;
     }
 
-    Tuple(final String businessId, final X509Certificate certificate, final PrivateKey key) {
+    Tuple(final String businessId, final X509Certificate certificate, final PrivateKey zkey) {
       this._businessId = businessId;
       this._certificate = certificate;
-      this._key = key;
+      this.zkey = zkey;
     }
   }
 
