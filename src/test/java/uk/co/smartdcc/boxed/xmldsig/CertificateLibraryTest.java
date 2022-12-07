@@ -40,7 +40,7 @@ public class CertificateLibraryTest {
   private List<Triplet<String, String, BigInteger>> testData_xmlSign = Arrays.asList(
       new Triplet<>(
           "Z1-accessControlBroker-ds.pem", "90B3D51F30000002",
-          new BigInteger("261E9CCC40A78FD13D83BCE07DACFE08", 16)
+          new BigInteger("7DAC7283AAD29BDD23C9EFBFDDB52A41", 16)
       ),
       new Triplet<>(
           "Z1-networkOperator-ds.pem", "90B3D51F30020000",
@@ -262,5 +262,38 @@ public class CertificateLibraryTest {
       CertificateLibrary.getInstance();
     });
     Assertions.assertEquals(2, statusCode);
+  }
+
+  /**
+   * test covers version of dsp xml signing certificate provided with versions
+   * of DCC Boxed < 1.4.1
+   */
+  @Test
+  public void containsOldDSPSigningKey() {
+    byte[] data = "hello".getBytes();
+    String businessId = "90b3d51f30000002";
+    BigInteger serial = new BigInteger("261E9CCC40A78FD13D83BCE07DACFE08", 16);
+    X509Certificate cert = CertificateLibrary.getInstance().lookup(serial);
+    Assertions.assertNotNull(cert);
+    Assertions.assertTrue(cert.getSubjectX500Principal().getName().toString().toLowerCase().contains(businessId));
+    PublicKey pubKey = cert.getPublicKey();
+    PrivateKey privKey = CertificateLibrary.getInstance().lookup_key(serial);
+
+    try {
+      Signature signer = Signature.getInstance("SHA256withECDSA");
+      signer.initSign(privKey);
+      signer.update(data);
+      byte[] signature = signer.sign();
+
+      Signature verifier = Signature.getInstance("SHA256withECDSA");
+      verifier.initVerify(pubKey);
+      verifier.update(data);
+      Assertions.assertTrue(
+          verifier.verify(signature),
+          "pub/private key check failed for old dsp xml sign"
+      );
+    } catch (Exception exception) {
+      Assertions.fail(exception.toString());
+    }
   }
 }
