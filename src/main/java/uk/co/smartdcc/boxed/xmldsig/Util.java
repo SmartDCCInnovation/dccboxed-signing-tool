@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -40,6 +41,10 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 
 public final class Util {
@@ -48,8 +53,21 @@ public final class Util {
 
   private static String DUIS_FILE_NAME = "DUIS Schema V5.1.xsd";
   private static Schema schema = null;
+  private static DOMImplementationRegistry registry = null;
+  private static DOMImplementationLS factoryLS = null;
 
   public static Schema load_schema() {
+    if (registry == null) {
+      try {
+        registry = DOMImplementationRegistry.newInstance();
+      } catch (Exception e) {
+        System.err.println("[E] internal error building DOM registry: " + e.getMessage());
+        return null;
+      }
+    }
+    if (factoryLS == null) {
+      factoryLS = (DOMImplementationLS) registry.getDOMImplementation("LS");
+    }
     if (schema != null) {
       return schema;
     }
@@ -59,7 +77,41 @@ public final class Util {
       System.err.println("[E] internal error loading schema, not found");
       return null;
     }
+
     try {
+      /*
+       * below ensures that XMLSchema.dtd and datatyes.dtd are loaded locally
+       * instead of from w3.org
+       */
+      sf.setResourceResolver(new LSResourceResolver() {
+        @Override
+        public LSInput resolveResource(
+            final String type, final String namespace, final String publicId, final String systemId,
+            final String baseURI
+        ) {
+          try {
+            if (systemId.equals("http://www.w3.org/2001/XMLSchema.dtd")
+                || systemId.equals("datatypes.dtd")) {
+              String[] nameParts = systemId.split("/");
+              String basename = nameParts[nameParts.length - 1];
+              LSInput input = factoryLS.createLSInput();
+              InputStream stream = Util.class.getClassLoader().getResource(basename)
+                  .openStream();
+              input.setPublicId(publicId);
+              input.setSystemId(systemId);
+              input.setBaseURI(baseURI);
+              input.setCharacterStream(new InputStreamReader(stream));
+              return input;
+            }
+          } catch (Exception e) {
+            System.err.println(
+                "[W] internal error loading " + systemId + " from local store: " + e.getMessage()
+            );
+          }
+          /* return null for default resolver */
+          return null;
+        }
+      });
       schema = sf.newSchema(url);
     } catch (Exception e) {
       System.err.println("[E] internal error loading schema: " + e.getMessage());
