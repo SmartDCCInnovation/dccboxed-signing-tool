@@ -14,3 +14,6 @@ updates:
     open-pull-requests-limit: 10
     assignees:
       - kazkansouh
+    groups:
+      org.junit.jupiter:
+        patterns: ["org.junit.jupiter:*"]
