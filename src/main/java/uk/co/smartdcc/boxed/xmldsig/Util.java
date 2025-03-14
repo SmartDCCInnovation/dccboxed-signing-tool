@@ -1,7 +1,7 @@
 /*
  * Created on Mon Jul 04 2022
  *
- * Copyright (c) 2022 Smart DCC Limited
+ * Copyright (c) 2025 Smart DCC Limited
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
@@ -253,26 +254,29 @@ public final class Util {
     return null;
   }
 
+  public static byte[] base64ToBytes(final String base64String) {
+    try {
+      return Base64.getDecoder().decode(base64String);
+    } catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
+
   public static PrivateKey load_key(final KeyFactory f, final String file_name)
       throws FileNotFoundException, IOException, InvalidKeySpecException {
-    String privkey = "";
-    FileInputStream is = null;
-    try {
-      is = new FileInputStream(file_name);
-      privkey = new String(is.readAllBytes());
-    } finally {
-      if (is != null) {
-        try {
-          is.close();
-        } catch (Exception e) {
-        }
+    try (FileInputStream is = new FileInputStream(file_name)) {
+      byte[] privkey = is.readAllBytes();
+      String keyContent = new String(privkey, StandardCharsets.UTF_8)
+          .replace("-----BEGIN PRIVATE KEY-----", "")
+          .replace("-----END PRIVATE KEY-----", "")
+          .replaceAll("\\s+", "");
+
+      byte[] b = base64ToBytes(keyContent);
+      if (b == null) {
+        b = privkey;
       }
+
+      return f.generatePrivate(new PKCS8EncodedKeySpec(b));
     }
-
-    privkey = privkey.replaceAll("\\n", "").replace("-----BEGIN PRIVATE KEY-----", "")
-        .replace("-----END PRIVATE KEY-----", "");
-    PKCS8EncodedKeySpec privkeySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privkey));
-
-    return f.generatePrivate(privkeySpec);
   }
 }

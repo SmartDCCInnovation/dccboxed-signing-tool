@@ -251,8 +251,15 @@ public class UtilTest {
   }
 
   @Test
-  void loadKey() throws Exception {
+  void loadKey_pem() throws Exception {
     String file_name = UtilTest.class.getClassLoader().getResource("Z1-supplier-ds.key.pem").getFile();
+    KeyFactory f = Util.create_key_factory();
+    Assertions.assertNotNull(Util.load_key_checked(f, file_name));
+  }
+
+  @Test
+  void loadKey_der() throws Exception {
+    String file_name = UtilTest.class.getClassLoader().getResource("Z1-supplier-ds.key.der").getFile();
     KeyFactory f = Util.create_key_factory();
     Assertions.assertNotNull(Util.load_key_checked(f, file_name));
   }
