@@ -65,22 +65,25 @@ jobs:
       run: mvn -B checkstyle:check
 
   test:
-    name: Run Tests
+    name: Run Tests on Java ${{ matrix.jdk }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        jdk: [ 11, 17, 21, 23 ]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 11
+    - name: Set up JDK ${{ matrix.jdk }}
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: ${{ matrix.jdk }}
         distribution: 'temurin'
         cache: maven
     - name: Maven install dependencies
       run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
     - name: Run tests and collect coverage
       run: mvn -B test
-    - name: Upload coverage to Codecov
-      if: github.event_name != 'push' || github.ref_type != 'tag' || !startsWith(github.ref_name, 'v')
+    - name: Upload coverage to Codecov (only java 11)
+      if: matrix.jdk == '11' && (github.event_name != 'push' || github.ref_type != 'tag' || !startsWith(github.ref_name, 'v'))
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
