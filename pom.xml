@@ -17,6 +17,25 @@
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>java17-plus</id>
+      <activation>
+        <jdk>[17,24)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>-Djava.security.manager=allow</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
