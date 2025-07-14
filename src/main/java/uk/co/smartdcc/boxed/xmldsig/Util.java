@@ -52,7 +52,7 @@ public final class Util {
   private Util() {
   }
 
-  private static String DUIS_FILE_NAME = "DUIS Schema V5.1.xsd";
+  private static String DUIS_FILE_NAME = "DUIS Schema V5.3a.xsd";
   private static Schema schema = null;
   private static DOMImplementationRegistry registry = null;
   private static DOMImplementationLS factoryLS = null;

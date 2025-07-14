@@ -138,4 +138,17 @@ public class ValidateTest {
     });
     Assertions.assertTrue(out.contains("<sr:ResponseCode>E65</sr:ResponseCode>"));
   }
+
+  @Test
+  void responseDuis5_3ReadInventory4G() throws Exception {
+    String file_name = ValidateTest.class.getClassLoader()
+        .getResource("read-inventory-response-4g.xml").getFile();
+    String out = SystemLambda.tapSystemOut(() -> {
+      int statusCode = SystemLambda.catchSystemExit(() -> {
+        Validate.main(new String[] { file_name });
+      });
+      Assertions.assertEquals(0, statusCode);
+    });
+    Assertions.assertFalse(out.contains("</ds:Signature>"));
+  }
 }
