@@ -37,7 +37,8 @@ public final class CertificateLibrary {
       "Z1-supplier2-ds",
       "Z1-transitionalCoS-ds",
       "Z1-wanProvider-ds",
-      "xml-sign-00DB123456780004-ds"
+      "xml-sign-00DB123456780004-ds",
+      "Z1-accessControlBroker-dSPXmlSign",
   };
   private static String[] certificate_names = certificate_names_xmlSign;
 
