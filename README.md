@@ -164,10 +164,25 @@ Any contributions will be expected to be licensable under GPLv3.
 As a convenience, to ensure code is correctly formatted it is possible to run
 `mvn formatter:format` to automatically format files as required.
 
+## Releasing
+
+There are no GitHub actions to automate the process, thus the following should be
+followed:
+
+  1. Switch to `main` branch (after changes have been included)
+  2. Increment the version in [pom.xml](./pom.xml)
+  3. Commit: `git commit -m 'maint: bump [patch/minor/major] version'`
+  4. Tag: `git tag v1.2.3` (must be aligned to version in pom.xml)
+  5. Push HEAD: `git push origin HEAD:main`
+  6. Confirm GitHub Action tests complete.
+  7. Push TAG: `git push origin v1.2.3`
+  8. Confirm [release package][releases] has been created by a GitHub Action.
+
 ## Other Info
 
-Copyright 2022, Smart DCC Limited, All rights reserved. Project is licensed under GPLv3.
+Copyright 2026, Smart DCC Limited, All rights reserved. Project is licensed under GPLv3.
 
 [boxed]: https://www.smartdcc.co.uk/our-smart-network/network-products-services/dcc-boxed/ "DCC Boxed"
 [gfi]: https://www.smartdcc.co.uk/our-smart-network/network-products-services/gfi/ "GFI"
 [duis]: https://smartenergycodecompany.co.uk/the-smart-energy-code-2/ "Smart Energy Code, see Appendix AD"
+[releases]: https://github.com/SmartDCCInnovation/dccboxed-signing-tool/releases "Release Packages"
