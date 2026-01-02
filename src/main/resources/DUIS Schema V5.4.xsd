@@ -7,15 +7,15 @@
     <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
         schemaLocation="xmldsig-core-schema.xsd"/>
     <xs:import namespace="http://www.dccinterface.co.uk/ResponseAndAlert"
-        schemaLocation="MMC Schema V5.3.xsd"/>
+        schemaLocation="MMC Schema V5.4.xsd"/>
 
     <!--
-    XML Filename                                - DUIS Schema V5.3a 
-    DUIS XML Schema Version - Request           - 5.3
-    DUIS XML Schema Version - Response          - 5.3    
+    XML Filename                                - DUIS Schema V5.4
+    DUIS XML Schema Version - Request           - 5.4
+    DUIS XML Schema Version - Response          - 5.4    
     Aligned with GBCS version                   - 4.3 
-    Date                                        - June 2024 
-    Minor revision of this XML schema           - 73.12
+    Date                                        - Nov 2025 
+    Minor revision of this XML schema           - 74.5
     -->
     <!-- Common Types -->
 
@@ -3426,6 +3426,14 @@ Cmd = Command
             <xs:enumeration value="AEG"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="Connectivity">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Cellular"/>
+            <xs:enumeration value="Virtual"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="RecordNetworkDataGAS"/>
 
     <xs:simpleType name="AuxiliaryControllerLevel">
@@ -3968,6 +3976,7 @@ Cmd = Command
             <xs:element minOccurs="0" name="DeviceGBCSVersion" type="xs:string"/>
             <xs:element minOccurs="0" name="HANVariant" type="xs:string"/>
             <xs:element minOccurs="0" name="S1SP" type="xs:string"/>
+            <xs:element minOccurs="0" name="Connectivity" type="sr:Connectivity"/>
         </xs:sequence>
     </xs:complexType>
     <xs:simpleType name="MPxN">
@@ -4184,6 +4193,7 @@ Cmd = Command
             <xs:enumeration value="E081401"/>
             <xs:enumeration value="E081402"/>
             <xs:enumeration value="E081405"/>
+            <xs:enumeration value="E081406"/>
             <xs:enumeration value="W081401"/>
             <xs:enumeration value="E110101"/>
             <xs:enumeration value="E110102"/>
