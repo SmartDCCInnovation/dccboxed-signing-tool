@@ -4,12 +4,12 @@
     targetNamespace="http://www.dccinterface.co.uk/ResponseAndAlert" elementFormDefault="qualified">
 
     <!--
-    XML Filename                                 - MMC Schema V5.3a
-    MMC XML Schema Version - GBCSResponse        - 5.3
+    XML Filename                                 - MMC Schema V5.4
+    MMC XML Schema Version - GBCSResponse        - 5.4
     Aligned with GBCS version                    - 4.3
-    Date                                         - June 2024
-    Minor revision of this XML schema            - v73.2
-                                                   Note there is no material change from MMC v5.2, it was just created to correspond with DUIS XSD v5.3a
+    Date                                         - Nov 2025
+    Minor revision of this XML schema            - v74.2
+                                                   Note there is no material change from MMC v5.3, it was just created to correspond with DUIS XSD v5.4
     -->
 
     <!-- Types previously defined in DUIS  -->

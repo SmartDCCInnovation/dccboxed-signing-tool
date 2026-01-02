@@ -153,6 +153,19 @@ public class ValidateTest {
   }
 
   @Test
+  void responseDuis5_4ReadInventory() throws Exception {
+    String file_name = ValidateTest.class.getClassLoader()
+        .getResource("read-inventory-response-5.4.xml").getFile();
+    String out = SystemLambda.tapSystemOut(() -> {
+      int statusCode = SystemLambda.catchSystemExit(() -> {
+        Validate.main(new String[] { file_name });
+      });
+      Assertions.assertEquals(0, statusCode);
+    });
+    Assertions.assertFalse(out.contains("</ds:Signature>"));
+  }
+
+  @Test
   void responseDuis5_3ReadFirmwareResigned() throws Exception {
     String file_name = ValidateTest.class.getClassLoader()
         .getResource("readfw-response-resigned.xml").getFile();
