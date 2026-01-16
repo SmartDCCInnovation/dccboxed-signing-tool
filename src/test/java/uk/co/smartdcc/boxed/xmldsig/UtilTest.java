@@ -98,18 +98,52 @@ public class UtilTest {
   }
 
   @Test
-  void createDocumentBuilderFactory() {
-    Assertions.assertNotNull(Util.create_document_builder_factory());
+  void getDocumentBuilderFactory() {
+    Assertions.assertNotNull(Util.get_document_builder_factory());
   }
 
   @Test
-  void createDocumentBuilderFactory_NoXXE() throws Exception {
-    DocumentBuilderFactory dbf = Util.create_document_builder_factory();
+  public void getDocumentBuilderFactory_Cache() {
+    DocumentBuilderFactory dbf = Util.get_document_builder_factory();
+    DocumentBuilderFactory dbf2 = Util.get_document_builder_factory();
+    Assertions.assertSame(dbf, dbf2);
+  }
+
+  @Test
+  void getDocumentBuilderFactory_NoXXE() throws Exception {
+    DocumentBuilderFactory dbf = Util.get_document_builder_factory();
     Assertions.assertTrue(dbf.getFeature("http://apache.org/xml/features/disallow-doctype-decl"));
     /* acid test, run through a basic xxe */
     InputStream is = UtilTest.class.getClassLoader().getResourceAsStream("duis-xxe.xml");
     Assertions.assertThrowsExactly(SAXParseException.class, () -> {
       dbf.newDocumentBuilder().parse(is);
+    });
+    is.close();
+  }
+
+  @Test
+  void parseDuisStream_Valid() throws Exception {
+    InputStream is = UtilTest.class.getClassLoader()
+        .getResourceAsStream("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML");
+    Assertions.assertNotNull(Util.parse_duis_stream(is));
+    is.close();
+  }
+
+  @Test
+  void parseDuisStream_Invalid() throws Exception {
+    InputStream is = UtilTest.class.getClassLoader()
+        .getResourceAsStream("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS-invalid.XML");
+    Assertions.assertThrowsExactly(SAXParseException.class, () -> {
+      Util.parse_duis_stream(is);
+    });
+    is.close();
+  }
+
+  @Test
+  void parseDuisStream_BadXml() throws Exception {
+    InputStream is = UtilTest.class.getClassLoader().getResourceAsStream("null");
+    Assertions.assertThrows(SAXException.class, () -> {
+      Util.parse_duis_stream(is);
     });
     is.close();
   }
