@@ -27,7 +27,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CertificateLibrary {
+public final class CertificateLibrary implements Eui64CredentialResolver, SerialCredentialResolver {
   private static String[] certificate_names_xmlSign = {
       "dsp-xml-sign-90B3D51F30000002-ds",
       "dsp-xml-sign-90B3D51F30000002-ds-pre-1.4.1",

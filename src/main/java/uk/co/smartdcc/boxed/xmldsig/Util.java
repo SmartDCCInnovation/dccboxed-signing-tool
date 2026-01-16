@@ -34,19 +34,20 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public final class Util {
   private Util() {
@@ -54,6 +55,7 @@ public final class Util {
 
   private static String DUIS_FILE_NAME = "DUIS Schema V5.4.xsd";
   private static Schema schema = null;
+  private static DocumentBuilderFactory documentBuilderFactory = null;
   private static DOMImplementationRegistry registry = null;
   private static DOMImplementationLS factoryLS = null;
 
@@ -121,19 +123,24 @@ public final class Util {
     return schema;
   }
 
-  public static DocumentBuilderFactory create_document_builder_factory() {
-    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    dbf.setNamespaceAware(true);
-    dbf.setSchema(load_schema());
-    dbf.setIgnoringElementContentWhitespace(true);
-    try {
-      dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-    } catch (Exception e) {
-      System.err.println("[W] could not disable doctype, system is possibly vulnerable to xxe");
+  public static DocumentBuilderFactory get_document_builder_factory() {
+    if (documentBuilderFactory == null) {
+      documentBuilderFactory = DocumentBuilderFactory.newInstance();
+      documentBuilderFactory.setNamespaceAware(true);
+      documentBuilderFactory.setSchema(load_schema());
+      documentBuilderFactory.setIgnoringElementContentWhitespace(true);
+      try {
+        documentBuilderFactory.setFeature(
+            "http://apache.org/xml/features/disallow-doctype-decl",
+            true
+        );
+      } catch (Exception e) {
+        System.err.println("[W] could not disable doctype, system is possibly vulnerable to xxe");
+      }
+      documentBuilderFactory.setXIncludeAware(false);
+      documentBuilderFactory.setExpandEntityReferences(false);
     }
-    dbf.setXIncludeAware(false);
-    dbf.setExpandEntityReferences(false);
-    return dbf;
+    return documentBuilderFactory;
   }
 
   public static Document load_duis_file_checked(final String file_name) {
@@ -152,10 +159,33 @@ public final class Util {
     return null;
   }
 
+  public static Document parse_duis_stream(final InputStream is)
+      throws IOException, SAXException, ParserConfigurationException {
+    DocumentBuilderFactory dbf = get_document_builder_factory();
+    DocumentBuilder db = dbf.newDocumentBuilder();
+    db.setErrorHandler(new ErrorHandler() {
+      @Override
+      public void error(final SAXParseException exception) throws SAXException {
+        throw exception;
+      }
+
+      @Override
+      public void fatalError(final SAXParseException exception) throws SAXException {
+        throw exception;
+      }
+
+      @Override
+      public void warning(final SAXParseException exception) throws SAXException {
+        throw exception;
+      }
+    });
+    Document doc = db.parse(is);
+
+    return doc;
+  }
+
   public static Document load_duis_file(final String file_name)
       throws FileNotFoundException, IOException, SAXException, ParserConfigurationException {
-    DocumentBuilderFactory dbf = create_document_builder_factory();
-    Document doc = null;
     InputStream is = null;
     try {
       if (file_name.equals("-")) {
@@ -163,23 +193,24 @@ public final class Util {
       } else {
         is = new FileInputStream(file_name);
       }
-      doc = dbf.newDocumentBuilder().parse(is);
+      return parse_duis_stream(is);
+    } catch (SAXParseException e) {
+      if (e.getMessage().equals("Premature end of file.")) {
+        throw e;
+      } else {
+        System.err
+            .println(
+                "[E] validation failed: "
+                    + e.getLineNumber() + ":" + e.getColumnNumber() + " " + e.getMessage()
+            );
+        return null;
+      }
     } finally {
       try {
         is.close();
       } catch (Exception e) {
       }
     }
-
-    Validator validator = load_schema().newValidator();
-    DOMSource source = new DOMSource(doc);
-    try {
-      validator.validate(source);
-    } catch (Exception e) {
-      return null;
-    }
-
-    return doc;
   }
 
   public static CertificateFactory create_certificate_factory() {

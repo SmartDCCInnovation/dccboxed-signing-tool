@@ -141,7 +141,45 @@ java -cp ./target/xmldsig-1.0-3.jar uk.co.smartdcc.boxed.xmldsig.Validate messag
 ```
 
 Here the `user.pem` is the associated users certificate. This should be of the
-correct format as defined by SMKI, especially it need to be formatted as `pem`. 
+correct format as defined by SMKI, especially it need to be formatted as `pem`.
+
+## API
+
+The tool can be used as a library in Java applications. The main API methods are:
+
+### Sign.verify_and_sign_input_stream
+
+Signs a DUIS request from an InputStream and returns the certificate used for signing.
+
+```java
+import uk.co.smartdcc.boxed.xmldsig.Sign;
+import uk.co.smartdcc.boxed.xmldsig.CertificateLibrary;
+import java.io.FileInputStream;
+import java.security.cert.X509Certificate;
+
+FileInputStream is = new FileInputStream("request.xml");
+X509Certificate cert = Sign.verify_and_sign_input_stream(
+    false,  // preserveCounter
+    is,
+    CertificateLibrary.getInstance()
+);
+```
+
+### Validate.validate_input_stream
+
+Validates a signed DUIS response from an InputStream and returns the unsigned XML as bytes.
+
+```java
+import uk.co.smartdcc.boxed.xmldsig.Validate;
+import uk.co.smartdcc.boxed.xmldsig.CertificateLibrary;
+import java.io.FileInputStream;
+
+FileInputStream is = new FileInputStream("response.xml");
+byte[] unsignedXml = Validate.validate_input_stream(
+    is,
+    CertificateLibrary.getInstance()
+);
+```
 
 ## Contributing
 
