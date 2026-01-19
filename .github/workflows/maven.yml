@@ -48,9 +48,9 @@ jobs:
       id: get-reporter
       run: |
         if test "${{ github.event_name }}" = "pull_request"; then
-          echo "::set-output name=reporter::github-pr-review"
+          echo "reporter=github-pr-review" >> "$GITHUB_OUTPUT"
         else
-          echo "::set-output name=reporter::github-check"
+          echo "reporter=github-check" >> "$GITHUB_OUTPUT"
         fi
     - name: Maven install plugins
       run: mvn -B -V dependency:resolve-plugins
@@ -114,7 +114,7 @@ jobs:
         version=$(echo ${{github.ref_name}} | cut -c2-)
         package="target/xmldsig-${version}.jar"
         if test -f "${package}"; then
-          echo "::set-output name=package::$package"
+          echo "package=$package" >> "$GITHUB_OUTPUT"
         else
           echo "Error: expected package file at: ${package}" 1>&2
           exit 1
