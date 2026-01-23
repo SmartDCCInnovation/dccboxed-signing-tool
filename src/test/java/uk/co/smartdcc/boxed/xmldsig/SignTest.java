@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXParseException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.PrivateKey;
@@ -131,10 +132,12 @@ public class SignTest {
   void verifyAndSignInputStream_Valid() throws Exception {
     InputStream is = UtilTest.class.getClassLoader()
         .getResourceAsStream("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML");
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
 
     Eui64CredentialResolver resolver = CertificateLibrary.getInstance();
-    X509Certificate cert = Sign.verify_and_sign_input_stream(false, is, resolver);
+    X509Certificate cert = Sign.verify_and_sign_input_stream(false, is, os, resolver);
     Assertions.assertNotNull(cert);
+    Assertions.assertTrue(os.toString().contains("</ds:Signature>"));
     is.close();
   }
 
@@ -142,12 +145,39 @@ public class SignTest {
   void verifyAndSignInputStream_InvalidXml() throws Exception {
     InputStream is = UtilTest.class.getClassLoader()
         .getResourceAsStream("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS-invalid.XML");
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
 
     Eui64CredentialResolver resolver = CertificateLibrary.getInstance();
     Assertions.assertThrows(SAXParseException.class, () -> {
-      Sign.verify_and_sign_input_stream(false, is, resolver);
+      Sign.verify_and_sign_input_stream(false, is, os, resolver);
     });
     is.close();
+    Assertions.assertEquals(0, os.size());
+  }
+
+  @Test
+  void verifyAndSignInputStream_KeyNotFound() throws Exception {
+    InputStream is = UtilTest.class.getClassLoader()
+        .getResourceAsStream("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML");
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+    Eui64CredentialResolver resolver = new Eui64CredentialResolver() {
+      @Override
+      public X509Certificate lookup(String eui64) {
+        return CertificateLibrary.getInstance().lookup(eui64);
+      }
+
+      @Override
+      public PrivateKey lookup_key(String eui64) {
+        return null;
+      }
+    };
+
+    Assertions.assertThrows(java.security.KeyException.class, () -> {
+      Sign.verify_and_sign_input_stream(false, is, os, resolver);
+    });
+    is.close();
+    Assertions.assertEquals(0, os.size());
   }
 
   @Test

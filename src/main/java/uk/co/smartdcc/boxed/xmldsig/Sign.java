@@ -19,6 +19,7 @@ package uk.co.smartdcc.boxed.xmldsig;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyException;
 import java.security.NoSuchAlgorithmException;
@@ -63,13 +64,22 @@ public final class Sign {
   }
 
   public static X509Certificate verify_and_sign_input_stream(
-      final boolean preserveCounter, final InputStream is, final Eui64CredentialResolver resolver
+      final boolean preserveCounter, final InputStream is, final OutputStream os,
+      final Eui64CredentialResolver resolver
   )
       throws IOException, SAXException, ParserConfigurationException, CertificateException,
       KeyException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
       MarshalException, XMLSignatureException {
     Document doc = Util.parse_duis_stream(is);
-    return sign_document(preserveCounter, doc, resolver);
+    X509Certificate cert = sign_document(preserveCounter, doc, resolver);
+    TransformerFactory tf = TransformerFactory.newInstance();
+    try {
+      Transformer trans = tf.newTransformer();
+      trans.transform(new DOMSource(doc), new StreamResult(os));
+    } catch (Exception e) {
+      throw new IOException("Failed to write signed document", e);
+    }
+    return cert;
   }
 
   public static X509Certificate sign_document(
