@@ -149,20 +149,25 @@ The tool can be used as a library in Java applications. The main API methods are
 
 ### Sign.verify_and_sign_input_stream
 
-Signs a DUIS request from an InputStream and returns the certificate used for signing.
+Signs a DUIS request from an InputStream, writes the signed XML to an OutputStream, and returns the certificate used for signing.
 
 ```java
 import uk.co.smartdcc.boxed.xmldsig.Sign;
 import uk.co.smartdcc.boxed.xmldsig.CertificateLibrary;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.security.cert.X509Certificate;
 
 FileInputStream is = new FileInputStream("request.xml");
+FileOutputStream os = new FileOutputStream("signed-request.xml");
 X509Certificate cert = Sign.verify_and_sign_input_stream(
     false,  // preserveCounter
     is,
+    os,
     CertificateLibrary.getInstance()
 );
+is.close();
+os.close();
 ```
 
 ### Validate.validate_input_stream
