@@ -5,3 +5,4 @@
 .vscode
 *jar
 *zip
+dependency-reduced-pom.xml

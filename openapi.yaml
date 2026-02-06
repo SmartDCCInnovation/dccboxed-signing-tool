@@ -1,0 +1,120 @@
+# Copyright (c) 2026 Smart DCC Limited
+# Licensed under GPL-3.0
+
+openapi: 3.0.3
+info:
+  title: DCC Boxed DUIS Signing Tool API
+  description: HTTP API for signing and validating DUIS XML messages
+  version: 1.0.0
+  contact:
+    name: Smart DCC Limited
+  license:
+    name: GPL-3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.html
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /sign:
+    post:
+      summary: Sign a DUIS request
+      description: Signs a DUIS XML message and returns the signed XML with digital signature
+      operationId: signMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  format: byte
+                  description: Base64-encoded unsigned DUIS XML message
+                  example: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4...
+      responses:
+        '200':
+          description: Successfully signed message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    format: byte
+                    description: Base64-encoded signed DUIS XML message with digital signature
+                    example: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4...
+        '400':
+          description: Bad request - invalid XML or signing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verify:
+    post:
+      summary: Verify a DUIS response
+      description: Validates a signed DUIS XML message and returns the unsigned XML
+      operationId: verifyMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  format: byte
+                  description: Base64-encoded signed DUIS XML message with digital signature
+                  example: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4...
+      responses:
+        '200':
+          description: Successfully verified message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    format: byte
+                    description: Base64-encoded validated DUIS XML message without digital signature
+                    example: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4...
+        '400':
+          description: Bad request - invalid signature or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '405':
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        errorCode:
+          type: string
+          description: Exception class name
