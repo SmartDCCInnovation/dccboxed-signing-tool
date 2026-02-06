@@ -45,8 +45,35 @@ mvn clean test
 
 ## Running
 
-The tool can be run in one of two modes, Sign or Validate. In both cases 
+The tool can be run in three modes: Sign, Validate, or Server. In Sign and Validate modes,
 the tool will print out logging information to `stderr`.
+
+### HTTP Server
+
+The tool can be run as an HTTP server that provides REST API endpoints for signing and
+validating DUIS messages.
+
+```
+java -cp ./target/xmldsig-2.1.0.jar uk.co.smartdcc.boxed.xmldsig.Server
+```
+
+By default, the server starts on port 8080. You can customize the port and logging:
+
+```
+java -cp ./target/xmldsig-2.1.0.jar uk.co.smartdcc.boxed.xmldsig.Server -p 9000 -q
+```
+
+Options:
+* `-p <port>` - Specify server port (default: 8080)
+* `-q` - Quiet mode (disable logging)
+* `-h` - Show help
+
+The server provides two endpoints:
+* `POST /sign` - Sign a DUIS request
+* `POST /verify` - Verify a DUIS response
+
+Both endpoints accept and return JSON with Base64-encoded XML messages. See the
+[OpenAPI specification](./openapi.yaml) for full API documentation.
 
 ### Sign DUIS
 
