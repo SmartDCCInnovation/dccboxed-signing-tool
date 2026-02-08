@@ -18,6 +18,8 @@
 package uk.co.smartdcc.boxed.xmldsig;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -128,15 +130,17 @@ public final class Server {
       return;
     }
     try {
-      Map<String, String> request = GSON.fromJson(
-          new String(exchange.getRequestBody().readAllBytes()),
-          MAP_TYPE
-      );
-      byte[] xmlBytes = Base64.getDecoder().decode(request.get("message"));
+      JsonObject request = JsonParser.parseString(
+          new String(exchange.getRequestBody().readAllBytes())
+      ).getAsJsonObject();
+      byte[] xmlBytes = Base64.getDecoder().decode(request.get("message").getAsString());
+      boolean preserveCounter = /* */
+          request.has("preserveCounter")
+              && request.get("preserveCounter").getAsBoolean();
       ByteArrayInputStream input = new ByteArrayInputStream(xmlBytes);
       ByteArrayOutputStream output = new ByteArrayOutputStream();
       Sign.verify_and_sign_input_stream(
-          false,
+          preserveCounter,
           input,
           output,
           CertificateLibrary.getInstance()

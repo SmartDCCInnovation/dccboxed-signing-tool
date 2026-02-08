@@ -18,6 +18,7 @@
 package uk.co.smartdcc.boxed.xmldsig;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterAll;
@@ -53,6 +54,36 @@ public class ServerTest {
     server.stop(0);
   }
 
+  <T> HttpURLConnection doPostWithPreserveCounter(String fileName, int port, String endpoint, T preserveCounter)
+      throws IOException, URISyntaxException {
+    InputStream is = UtilTest.class.getClassLoader().getResourceAsStream(fileName);
+    byte[] xmlBytes = is.readAllBytes();
+    is.close();
+
+    String encoded = Base64.getEncoder().encodeToString(xmlBytes);
+    JsonObject request = new JsonObject();
+    request.addProperty("message", encoded);
+    if (preserveCounter instanceof Boolean) {
+      request.addProperty("preserveCounter", (Boolean) preserveCounter);
+    } else if (preserveCounter instanceof Integer) {
+      request.addProperty("preserveCounter", (Integer) preserveCounter);
+    } else if (preserveCounter instanceof String) {
+      request.addProperty("preserveCounter", (String) preserveCounter);
+    }
+    String requestJson = GSON.toJson(request);
+
+    HttpURLConnection conn = (HttpURLConnection) new URI("http://localhost:" + port + "/" + endpoint)
+        .toURL().openConnection();
+    conn.setRequestMethod("POST");
+    conn.setDoOutput(true);
+    conn.setRequestProperty("Content-Type", "application/json");
+    OutputStream os = conn.getOutputStream();
+    os.write(requestJson.getBytes());
+    os.close();
+
+    return conn;
+  }
+
   HttpURLConnection doPost(String fileName, int port, String endpoint) throws IOException, URISyntaxException {
     InputStream is = UtilTest.class.getClassLoader().getResourceAsStream(fileName);
     byte[] xmlBytes = is.readAllBytes();
@@ -71,6 +102,76 @@ public class ServerTest {
     os.close();
 
     return conn;
+  }
+
+  @Test
+  void signEndpoint_PreserveCounterTrue() throws Exception {
+    HttpURLConnection conn = doPostWithPreserveCounter(
+        "ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML", PORT, "sign", true
+    );
+
+    Assertions.assertEquals(200, conn.getResponseCode());
+    String responseJson = new String(conn.getInputStream().readAllBytes());
+    Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
+    String signedXml = new String(Base64.getDecoder().decode(response.get("message")));
+    Assertions.assertTrue(signedXml.contains("</ds:Signature>"));
+    Assertions.assertTrue(
+        signedXml.contains("<sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000</sr:RequestID>")
+    );
+  }
+
+  @Test
+  void signEndpoint_PreserveCounterFalse() throws Exception {
+    HttpURLConnection conn = doPostWithPreserveCounter(
+        "ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML", PORT, "sign", false
+    );
+
+    Assertions.assertEquals(200, conn.getResponseCode());
+    String responseJson = new String(conn.getInputStream().readAllBytes());
+    Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
+    String signedXml = new String(Base64.getDecoder().decode(response.get("message")));
+    Assertions.assertTrue(signedXml.contains("</ds:Signature>"));
+    Assertions.assertFalse(
+        signedXml.contains("<sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000</sr:RequestID>")
+    );
+    Assertions.assertTrue(
+        signedXml.matches("(?s).*<sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:\\d+</sr:RequestID>.*")
+    );
+  }
+
+  @Test
+  void signEndpoint_PreserveCounterStringFalse() throws Exception {
+    HttpURLConnection conn = doPostWithPreserveCounter(
+        "ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML", PORT, "sign", "false"
+    );
+
+    Assertions.assertEquals(200, conn.getResponseCode());
+    String responseJson = new String(conn.getInputStream().readAllBytes());
+    Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
+    String signedXml = new String(Base64.getDecoder().decode(response.get("message")));
+    Assertions.assertTrue(signedXml.contains("</ds:Signature>"));
+    Assertions.assertFalse(
+        signedXml.contains("<sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000</sr:RequestID>")
+    );
+    Assertions.assertTrue(
+        signedXml.matches("(?s).*<sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:\\d+</sr:RequestID>.*")
+    );
+  }
+
+  @Test
+  void signEndpoint_PreserveCounterStringTrue() throws Exception {
+    HttpURLConnection conn = doPostWithPreserveCounter(
+        "ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML", PORT, "sign", "true"
+    );
+
+    Assertions.assertEquals(200, conn.getResponseCode());
+    String responseJson = new String(conn.getInputStream().readAllBytes());
+    Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
+    String signedXml = new String(Base64.getDecoder().decode(response.get("message")));
+    Assertions.assertTrue(signedXml.contains("</ds:Signature>"));
+    Assertions.assertTrue(
+        signedXml.contains("<sr:RequestID>90-B3-D5-1F-30-01-00-00:00-07-81-D7-00-00-36-CE:1000</sr:RequestID>")
+    );
   }
 
   @Test

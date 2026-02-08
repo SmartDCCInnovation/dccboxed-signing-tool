@@ -36,6 +36,11 @@ paths:
                   format: byte
                   description: Base64-encoded unsigned DUIS XML message
                   example: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4...
+                preserveCounter:
+                  type: boolean
+                  description: Optional. When true, preserves the original counter in the DUIS request. When false or omitted, overwrites with System.currentTimeMillis()
+                  default: false
+                  example: true
       responses:
         '200':
           description: Successfully signed message

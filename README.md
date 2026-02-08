@@ -69,10 +69,11 @@ Options:
 * `-h` - Show help
 
 The server provides two endpoints:
-* `POST /sign` - Sign a DUIS request
+* `POST /sign` - Sign a DUIS request (supports optional `preserveCounter` parameter)
 * `POST /verify` - Verify a DUIS response
 
-Both endpoints accept and return JSON with Base64-encoded XML messages. See the
+Both endpoints accept and return JSON with Base64-encoded XML messages. The `/sign` endpoint
+supports an optional `preserveCounter` parameter to control counter behaviour. See the
 [OpenAPI specification](./openapi.yaml) for full API documentation.
 
 ### Sign DUIS
