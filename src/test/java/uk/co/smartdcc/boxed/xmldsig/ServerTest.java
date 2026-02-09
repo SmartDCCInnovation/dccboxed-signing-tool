@@ -235,6 +235,17 @@ public class ServerTest {
   }
 
   @Test
+  void verifyEndpoint_Valid_NoSignature() throws Exception {
+    HttpURLConnection conn = doPost("acknowledgement-error.xml", PORT, "verify");
+
+    Assertions.assertEquals(200, conn.getResponseCode());
+    String responseJson = new String(conn.getInputStream().readAllBytes());
+    Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
+    String validatedXml = new String(Base64.getDecoder().decode(response.get("message")));
+    Assertions.assertFalse(validatedXml.contains("</ds:Signature>"));
+  }
+
+  @Test
   void verifyEndpoint_Invalid() throws Exception {
     HttpURLConnection conn = doPost("readfw-response-invalid.xml", PORT, "verify");
 
