@@ -47,9 +47,13 @@ public final class Server {
   private Server() {
   }
 
-  private static void log(final String message) {
+  private static void log(final boolean error, final String message) {
     if (!quiet) {
-      System.err.println(message);
+      String code = "I";
+      if (error) {
+        code = "E";
+      }
+      System.err.println("[" + code + "] [" + ProcessHandle.current().pid() + "] " + message);
     }
   }
 
@@ -107,14 +111,14 @@ public final class Server {
     });
     Runtime.getRuntime().addShutdownHook(shutdownHook);
     server.start();
-    log("[I] Server started on port " + port);
+    log(false, "Server started on port " + port);
     synchronized (sync) {
       try {
         sync.wait();
       } catch (InterruptedException ignored) {
       }
     }
-    log("[I] Shutting down server...");
+    log(false, "Shutting down server...");
     server.stop(0);
   }
 
@@ -124,11 +128,11 @@ public final class Server {
       exchange.close();
       return;
     }
-    log("[I] Sign request received");
     if (!"POST".equals(exchange.getRequestMethod())) {
       sendResponse(exchange, HTTP_METHOD_NOT_ALLOWED, Map.of("error", "Method not allowed"));
       return;
     }
+    log(false, "(" + exchange.getRemoteAddress() + ") Sign request received ");
     try {
       JsonObject request = JsonParser.parseString(
           new String(exchange.getRequestBody().readAllBytes())
@@ -147,14 +151,14 @@ public final class Server {
       );
       String encoded = Base64.getEncoder().encodeToString(output.toByteArray());
       sendResponse(exchange, HTTP_OK, Map.of("message", encoded));
-      log("[I] Sign request completed successfully");
+      log(false, "(" + exchange.getRemoteAddress() + ") Sign request completed successfully");
     } catch (Exception e) {
       sendResponse(
           exchange,
           HTTP_BAD_REQUEST,
           Map.of("error", e.getMessage(), "errorCode", e.getClass().getSimpleName())
       );
-      log("[E] Sign request failed: " + e.getMessage());
+      log(true, "(" + exchange.getRemoteAddress() + ") Sign request failed: " + e.getMessage());
     }
   }
 
@@ -164,11 +168,11 @@ public final class Server {
       exchange.close();
       return;
     }
-    log("[I] Verify request received");
     if (!"POST".equals(exchange.getRequestMethod())) {
       sendResponse(exchange, HTTP_METHOD_NOT_ALLOWED, Map.of("error", "Method not allowed"));
       return;
     }
+    log(false, "(" + exchange.getRemoteAddress() + ") Verify request received");
     try {
       Map<String, String> request = GSON.fromJson(
           new String(exchange.getRequestBody().readAllBytes()),
@@ -186,14 +190,14 @@ public final class Server {
       }
       String encoded = Base64.getEncoder().encodeToString(validated);
       sendResponse(exchange, HTTP_OK, Map.of("message", encoded));
-      log("[I] Verify request completed successfully");
+      log(false, "(" + exchange.getRemoteAddress() + ") Verify request completed successfully");
     } catch (Exception e) {
       sendResponse(
           exchange,
           HTTP_BAD_REQUEST,
           Map.of("error", e.getMessage(), "errorCode", e.getClass().getSimpleName())
       );
-      log("[E] Verify request failed: " + e.getMessage());
+      log(true, "(" + exchange.getRemoteAddress() + ") Verify request failed: " + e.getMessage());
     }
   }
 

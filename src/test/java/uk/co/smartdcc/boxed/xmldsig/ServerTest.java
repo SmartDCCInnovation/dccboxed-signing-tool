@@ -26,9 +26,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -194,6 +196,10 @@ public class ServerTest {
 
   @Test
   void signEndpoint_Valid() throws Exception {
+    PrintStream originalErr = System.err;
+    ByteArrayOutputStream capturedErr = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(capturedErr));
+
     HttpURLConnection conn = doPost("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS.XML", PORT, "sign");
 
     Assertions.assertEquals(200, conn.getResponseCode());
@@ -201,16 +207,28 @@ public class ServerTest {
     Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
     String signedXml = new String(Base64.getDecoder().decode(response.get("message")));
     Assertions.assertTrue(signedXml.contains("</ds:Signature>"));
+
+    Thread.sleep(50);
+    System.setErr(originalErr);
+    Assertions.assertFalse(capturedErr.toString().contains("[E]"));
   }
 
   @Test
   void signEndpoint_Invalid() throws Exception {
+    PrintStream originalErr = System.err;
+    ByteArrayOutputStream capturedErr = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(capturedErr));
+
     HttpURLConnection conn = doPost("ECS17b_4.1.1_SINGLE_SUCCESS_REQUEST_DUIS-invalid.XML", PORT, "sign");
 
     Assertions.assertEquals(400, conn.getResponseCode());
     String responseJson = new String(conn.getErrorStream().readAllBytes());
     Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
     Assertions.assertEquals("SAXParseException", response.get("errorCode"));
+
+    Thread.sleep(50);
+    System.setErr(originalErr);
+    Assertions.assertTrue(capturedErr.toString().contains("[E]"));
   }
 
   @Test
@@ -225,6 +243,10 @@ public class ServerTest {
 
   @Test
   void verifyEndpoint_Valid() throws Exception {
+    PrintStream originalErr = System.err;
+    ByteArrayOutputStream capturedErr = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(capturedErr));
+
     HttpURLConnection conn = doPost("readfw-response.xml", PORT, "verify");
 
     Assertions.assertEquals(200, conn.getResponseCode());
@@ -232,6 +254,10 @@ public class ServerTest {
     Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
     String validatedXml = new String(Base64.getDecoder().decode(response.get("message")));
     Assertions.assertFalse(validatedXml.contains("</ds:Signature>"));
+
+    Thread.sleep(50);
+    System.setErr(originalErr);
+    Assertions.assertFalse(capturedErr.toString().contains("[E]"));
   }
 
   @Test
@@ -247,12 +273,20 @@ public class ServerTest {
 
   @Test
   void verifyEndpoint_Invalid() throws Exception {
+    PrintStream originalErr = System.err;
+    ByteArrayOutputStream capturedErr = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(capturedErr));
+
     HttpURLConnection conn = doPost("readfw-response-invalid.xml", PORT, "verify");
 
     Assertions.assertEquals(400, conn.getResponseCode());
     String responseJson = new String(conn.getErrorStream().readAllBytes());
     Map<String, String> response = GSON.fromJson(responseJson, MAP_TYPE);
     Assertions.assertEquals("SAXParseException", response.get("errorCode"));
+
+    Thread.sleep(50);
+    System.setErr(originalErr);
+    Assertions.assertTrue(capturedErr.toString().contains("[E]"));
   }
 
   @Test
