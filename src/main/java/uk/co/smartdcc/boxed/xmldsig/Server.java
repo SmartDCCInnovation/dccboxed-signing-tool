@@ -180,6 +180,10 @@ public final class Server {
           input,
           CertificateLibrary.getInstance()
       );
+      /* response without signature */
+      if (validated == null) {
+        validated = xmlBytes;
+      }
       String encoded = Base64.getEncoder().encodeToString(validated);
       sendResponse(exchange, HTTP_OK, Map.of("message", encoded));
       log("[I] Verify request completed successfully");
